@@ -29,6 +29,20 @@ class KeychainEditor {
     this.controlPanel = null; // Панель управления в DOM
     this.instructionsModal = null; // Модальное окно с инструкциями
     this.container = null; // Контейнер для канваса
+    this.originalCanvasWidth = this.options.width; // Сохраняем исходную ширину канваса
+    this.originalCanvasHeight = this.options.height; // Сохраняем исходную высоту канваса
+    this.cordImageAspectRatio = null; // Сохраняем соотношение сторон изображения шнурка
+    this.marginRatio = 150 / this.options.height; // Соотношение отступа для позиций на шнуре
+    this.currentCanvasWidth = this.options.width; // Текущая ширина канваса
+    this.currentCanvasHeight = this.options.height; // Текущая высота канваса
+
+    // Пороговые значения для перемещения элементов
+    this.originalDetachThreshold = 50; // Исходный порог открепления
+    this.originalAttachThreshold = 50; // Исходный порог прикрепления
+    this.originalSwapThreshold = 25; // Исходный порог обмена элементами
+    this.currentDetachThreshold = this.originalDetachThreshold;
+    this.currentAttachThreshold = this.originalAttachThreshold;
+    this.currentSwapThreshold = this.originalSwapThreshold;
   }
 
   // Новый метод init, который принимает селектор для поиска целевого элемента
@@ -51,13 +65,28 @@ class KeychainEditor {
 
   // Переименовываем старый метод init в initializeEditor
   initializeEditor() {
+    // Сначала создаем канвас
     this.createCanvas();
+
+    // Настраиваем канвас (включая адаптивность)
     this.setupCanvas();
-    this.createControlPanel(); // Создаем панель управления в DOM
-    this.createInstructionsModal(); // Создаем модальное окно с инструкциями
+
+    // Создаем панель управления (после канваса)
+    this.createControlPanel();
+
+    // Создаем модальное окно с инструкциями
+    this.createInstructionsModal();
+
+    // Создаем позиции на шнуре
     this.createCordPositions();
+
+    // Инициализируем шнур
     this.initCord();
+
+    // Устанавливаем обработчики событий
     this.setupEventListeners();
+
+    // Настраиваем наблюдатель за изменением размера
     this.setupResizeObserver();
   }
 
@@ -90,74 +119,132 @@ class KeychainEditor {
     this.applyResponsive();
   }
 
-  applyResponsive() {
-    // Получаем текущую ширину контейнера
-    const containerWidth = this.container.clientWidth;
+  // Новая функция для расчета масштабированных позиций
+  getScaledPosition(originalX, originalY) {
+    const scaleX = this.currentCanvasWidth / this.originalCanvasWidth;
+    const scaleY = this.currentCanvasHeight / this.originalCanvasHeight;
 
-    // Вычисляем масштабируемую ширину канваса
-    const canvasWidth = Math.min(containerWidth, this.options.width);
-
-    // Вычисляем масштабируемую высоту канваса (пропорционально)
-    const aspectRatio = this.options.height / this.options.width;
-    const canvasHeight = canvasWidth * aspectRatio;
-
-    // Обновляем размеры канваса
-    this.canvas.setDimensions({
-      width: canvasWidth,
-      height: canvasHeight,
-    });
-
-    // Обновляем позиции всех элементов
-    this.updateElementPositions(canvasWidth, canvasHeight);
-
-    // Перерисовываем канвас
-    this.canvas.renderAll();
+    return {
+      x: originalX * scaleX,
+      y: originalY * scaleY,
+    };
   }
 
-  updateElementPositions(canvasWidth, canvasHeight) {
-    const scaleX = canvasWidth / this.options.width;
-    const scaleY = canvasHeight / this.options.height;
+  // Функция для обновления пороговых значений
+  updateThresholds() {
+    const scaleX = this.currentCanvasWidth / this.originalCanvasWidth;
+    const scaleY = this.currentCanvasHeight / this.originalCanvasHeight;
 
+    // Обновляем пороговые значения
+    this.currentDetachThreshold = this.originalDetachThreshold * scaleX;
+    this.currentAttachThreshold = this.originalAttachThreshold * scaleX;
+    this.currentSwapThreshold = this.originalSwapThreshold * scaleY;
+  }
+
+  applyResponsive() {
+    if (this.controlPanel) {
+      // Получаем текущую ширину контейнера
+      const containerWidth = this.controlPanel.clientWidth;
+
+      // Вычисляем масштабируемую ширину канваса
+      const canvasWidth = Math.min(containerWidth, this.options.width);
+
+      // Вычисляем масштабируемую высоту канваса (пропорционально)
+      const aspectRatio = this.options.height / this.options.width;
+      const canvasHeight = canvasWidth * aspectRatio;
+
+      // Обновляем размеры канваса
+      this.currentCanvasWidth = canvasWidth;
+      this.currentCanvasHeight = canvasHeight;
+
+      // Важно: сначала обновляем размеры канваса
+      this.canvas.setDimensions({
+        width: canvasWidth,
+        height: canvasHeight,
+      });
+
+      // Затем обновляем позиции всех элементов
+      this.updateElementPositions(canvasWidth, canvasHeight);
+
+      // Перерисовываем канвас
+      this.canvas.renderAll();
+    }
+  }
+
+  updateElementPositions() {
     // Обновляем позиции элементов на шнуре
     if (this.currentCord) {
+      // Шнурок должен занимать всю высоту канваса (с небольшими отступами)
+      const cordHeight = this.currentCanvasHeight - 10; // 5px сверху и 5px снизу
+      const cordWidth = cordHeight / this.cordImageAspectRatio; // Вычисляем ширину, сохраняя пропорции
+
+      // Размещаем шнурок по центру
+      const cordLeft = (this.currentCanvasWidth - cordWidth) / 2;
+      const cordTop = 5; // Отступ сверху
+
+      // Обновляем размеры и позицию шнурка
       this.currentCord.set({
-        left: canvasWidth / 2 - (this.options.cordWidth * scaleX) / 2,
-        top: 5 * scaleY,
-        scaleX: scaleX * (this.options.cordWidth / this.currentCord.width),
-        scaleY: scaleY * (this.options.cordWidth / this.currentCord.height),
+        left: cordLeft,
+        top: cordTop,
+        scaleX: cordWidth / this.currentCord.width,
+        scaleY: cordHeight / this.currentCord.height,
       });
+      this.currentCord.setCoords();
     }
 
-    // Обновляем позиции шаблонных элементов
+    // Используем относительное значение отступа вместо фиксированного 150
+    const positionHeight =
+      (this.currentCanvasHeight * (1 - this.marginRatio)) /
+      (this.options.maxElements + 1);
+
+    // Сначала обновляем позиции на шнуре
+    this.cordPositions.forEach((pos, index) => {
+      pos.y = 5 + positionHeight * (index + 1);
+    });
+
+    // Затем обновляем позиции шаблонных элементов
     this.templateElements.forEach((element) => {
       if (!element.onCord) {
+        // Для элементов не на шнуре используем функцию getScaledPosition
+        const scaledPos = this.getScaledPosition(
+          element.originalLeft,
+          element.originalTop
+        );
+
         element.set({
-          left: element.originalLeft * scaleX,
-          top: element.originalTop * scaleY,
-          scaleX: scaleX * (100 / element.width),
-          scaleY: scaleY * (100 / element.height),
+          left: scaledPos.x,
+          top: scaledPos.y,
+          scaleX:
+            (this.currentCanvasWidth / this.originalCanvasWidth) *
+            (100 / element.width),
+          scaleY:
+            (this.currentCanvasHeight / this.originalCanvasHeight) *
+            (100 / element.height),
         });
       } else {
         // Элементы на шнуре
         const positionIndex = element.positionIndex;
         if (positionIndex >= 0 && positionIndex < this.cordPositions.length) {
-          const positionY = this.cordPositions[positionIndex].y * scaleY;
+          // Обновляем позицию на шнуре
+          const positionY = this.cordPositions[positionIndex].y;
           element.set({
-            left: canvasWidth / 2,
+            left: this.currentCanvasWidth / 2,
             top: positionY,
-            scaleX: scaleX * (100 / element.width),
-            scaleY: scaleY * (100 / element.height),
+            scaleX:
+              (this.currentCanvasWidth / this.originalCanvasWidth) *
+              (100 / element.width),
+            scaleY:
+              (this.currentCanvasHeight / this.originalCanvasHeight) *
+              (100 / element.height),
           });
         }
       }
+      // Важно: обновляем координаты после изменения позиции
+      element.setCoords();
     });
 
-    // Обновляем позиции на шнуре
-    const positionHeight =
-      (canvasHeight - 150 * scaleY) / (this.options.maxElements + 1);
-    this.cordPositions.forEach((pos, index) => {
-      pos.y = 5 * scaleY + positionHeight * (index + 1);
-    });
+    // Обновляем пороговые значения
+    this.updateThresholds();
   }
 
   setupResizeObserver() {
@@ -186,7 +273,7 @@ class KeychainEditor {
               align-items: center;
               justify-content: space-between;
               flex-wrap: wrap;
-              max-width: 600px;
+              max-width: 560px;
             }
 
             .control-panel-left {
@@ -333,8 +420,10 @@ class KeychainEditor {
     this.controlPanel.appendChild(leftPanel);
     this.controlPanel.appendChild(rightPanel);
 
-    // Добавляем панель в контейнер канваса
+    // Добавляем панель в контейнер канваса (после канваса)
     this.container.appendChild(this.controlPanel);
+
+    this.applyResponsive();
   }
 
   // Создаем модальное окно с инструкциями
@@ -464,8 +553,10 @@ class KeychainEditor {
   }
 
   createCordPositions() {
+    // Используем относительное значение отступа вместо фиксированного 150
     const positionHeight =
-      (this.options.height - 150) / (this.options.maxElements + 1);
+      (this.options.height * (1 - this.marginRatio)) /
+      (this.options.maxElements + 1);
 
     for (let i = 1; i <= this.options.maxElements; i++) {
       this.cordPositions.push({
@@ -539,16 +630,16 @@ class KeychainEditor {
       fabric.Image.fromURL(
         this.options.cordUrls[color],
         (img) => {
-          // Устанавливаем размеры изображения
-          const targetWidth = this.options.cordWidth;
-          const aspectRatio = img.height / img.width;
-          const targetHeight = targetWidth * aspectRatio;
+          // Сохраняем соотношение сторон изображения шнурка
+          this.cordImageAspectRatio = img.height / img.width;
 
+          // Устанавливаем начальные размеры изображения
           img.set({
-            left: this.options.width / 2 - targetWidth / 2,
+            left: this.options.width / 2 - this.options.cordWidth / 2,
             top: 5,
-            scaleX: targetWidth / img.width,
-            scaleY: targetHeight / img.height,
+            scaleX: this.options.cordWidth / img.width,
+            scaleY:
+              (this.options.cordWidth * this.cordImageAspectRatio) / img.height,
             selectable: false,
             evented: false,
             lockMovementX: true,
@@ -635,11 +726,11 @@ class KeychainEditor {
         // Добавляем обработчики событий для перетаскивания
         element.on("moving", () => {
           if (element.onCord && !element.isDetaching) {
-            const cordCenterX = this.canvas.width / 2;
+            const cordCenterX = this.currentCanvasWidth / 2;
 
             // Проверка горизонтального смещения для открепления
             const horizontalDistance = Math.abs(element.left - cordCenterX);
-            if (horizontalDistance > 50) {
+            if (horizontalDistance > this.currentDetachThreshold) {
               // Начинаем процесс открепления
               element.isDetaching = true;
               element.onCord = false;
@@ -653,9 +744,10 @@ class KeychainEditor {
             element.left = cordCenterX;
 
             // Проверка вертикального перемещения для обмена местами
-            const currentPosition = this.cordPositions[element.positionIndex];
+            // Используем относительное значение отступа
             const positionHeight =
-              (this.canvas.height - 150) / (this.options.maxElements + 1);
+              (this.currentCanvasHeight * (1 - this.marginRatio)) /
+              (this.options.maxElements + 1);
             const swapThreshold = positionHeight / 2;
 
             // Проверка перемещения вверх
@@ -688,35 +780,39 @@ class KeychainEditor {
           if (element.isDetaching) {
             // Элемент был откреплен, возвращаем в исходное положение
             element.isDetaching = false;
+            const scaledPos = this.getScaledPosition(
+              element.originalLeft,
+              element.originalTop
+            );
             this.animateElement(
               element,
               element.left,
               element.top,
-              element.originalLeft,
-              element.originalTop
+              scaledPos.x,
+              scaledPos.y
             );
           } else if (element.onCord) {
             // Элемент на шнуре, проверяем, нужно ли вернуть его в позицию
             const positionY = this.cordPositions[element.positionIndex].y;
             const verticalDistance = Math.abs(element.top - positionY);
 
-            // Если элемент сдвинут более чем на 5 пикселей, возвращаем его в позицию
-            if (verticalDistance > 5) {
+            // Если элемент сдвинут более чем на пороговое значение, возвращаем его в позицию
+            if (verticalDistance > this.currentSwapThreshold) {
               this.animateElement(
                 element,
                 element.left,
                 element.top,
-                this.canvas.width / 2,
+                this.currentCanvasWidth / 2,
                 positionY,
                 300
               );
             }
           } else if (!element.onCord) {
             // Проверка, находится ли элемент над шнуром
-            const cordCenterX = this.canvas.width / 2;
+            const cordCenterX = this.currentCanvasWidth / 2;
             const distance = Math.abs(element.left - cordCenterX);
 
-            if (distance < 50) {
+            if (distance < this.currentAttachThreshold) {
               // Поиск ближайшей свободной позиции
               let closestPosition = -1;
               let minDistance = Infinity;
@@ -731,7 +827,10 @@ class KeychainEditor {
                 }
               });
 
-              if (closestPosition !== -1 && minDistance < 50) {
+              if (
+                closestPosition !== -1 &&
+                minDistance < this.currentAttachThreshold
+              ) {
                 // Размещение элемента на шнуре
                 element.onCord = true;
                 element.positionIndex = closestPosition;
@@ -744,22 +843,30 @@ class KeychainEditor {
                 element.setCoords();
               } else {
                 // Элемент не прикреплен к шнуру, возвращаем на исходную позицию с анимацией
+                const scaledPos = this.getScaledPosition(
+                  element.originalLeft,
+                  element.originalTop
+                );
                 this.animateElement(
                   element,
                   element.left,
                   element.top,
-                  element.originalLeft,
-                  element.originalTop
+                  scaledPos.x,
+                  scaledPos.y
                 );
               }
             } else {
               // Элемент не прикреплен к шнуру, возвращаем на исходную позицию с анимацией
+              const scaledPos = this.getScaledPosition(
+                element.originalLeft,
+                element.originalTop
+              );
               this.animateElement(
                 element,
                 element.left,
                 element.top,
-                element.originalLeft,
-                element.originalTop
+                scaledPos.x,
+                scaledPos.y
               );
             }
           }
@@ -831,12 +938,16 @@ class KeychainEditor {
       element.originalTop = newPosition.y + 50;
 
       // Анимированно перемещаем элемент на новую позицию
+      const scaledPos = this.getScaledPosition(
+        element.originalLeft,
+        element.originalTop
+      );
       this.animateElement(
         element,
         element.left,
         element.top,
-        element.originalLeft,
-        element.originalTop
+        scaledPos.x,
+        scaledPos.y
       );
     });
 
@@ -1007,7 +1118,7 @@ class KeychainEditor {
         pos1.element,
         pos1.element.left,
         pos1.element.top,
-        this.canvas.width / 2,
+        this.currentCanvasWidth / 2,
         pos1.y,
         300
       );
@@ -1017,11 +1128,10 @@ class KeychainEditor {
         pos2.element,
         pos2.element.left,
         pos2.element.top,
-        this.canvas.width / 2,
+        this.currentCanvasWidth / 2,
         pos2.y,
         300
       );
     }
   }
 }
-
