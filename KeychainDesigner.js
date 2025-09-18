@@ -58,6 +58,17 @@ document.addEventListener("DOMContentLoaded", function () {
       "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-7a9c95e3b00b36c39188d1c5756d086d.png",
     ];
 
+    // Переменная для хранения текущего шнурка
+    let currentCord = null;
+
+    // Загрузка изображений шнурков
+    const cordUrls = {
+      green:
+        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-e2aacb4b0c724ab91dbb67fd454395bd.png",
+      gray: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-feb60a4aebc511c7d82b5e41167ead38.png",
+      blue: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-418dccd27f75ff59e19dd9307db9a4ab.png",
+    };
+
     // Массив для хранения позиций элементов на шнуре
     const cordPositions = [];
     const positionHeight = (canvas.height - 100) / (maxElements + 1);
@@ -289,17 +300,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     );
 
-    // Переменная для хранения текущего шнурка
-    let currentCord = null;
-
-    // Загрузка изображений шнурков
-    const cordUrls = {
-      green:
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-e2aacb4b0c724ab91dbb67fd454395bd.png",
-      gray: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-feb60a4aebc511c7d82b5e41167ead38.png",
-      blue: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-418dccd27f75ff59e19dd9307db9a4ab.png",
-    };
-
     // Функция для создания шнурка
     function createCord(color) {
       return new Promise((resolve) => {
@@ -399,6 +399,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Возвращаем результат в формате JSON
       return JSON.stringify(result, null, 2);
     }
+    window.getResultJson = getResultJson;
 
     // Инициализация с зеленым шнурком
     createCord("green").then((cord) => {
