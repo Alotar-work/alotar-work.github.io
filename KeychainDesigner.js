@@ -186,7 +186,7 @@ class KeychainEditor {
               align-items: center;
               justify-content: space-between;
               flex-wrap: wrap;
-              max-width: 562px;
+              max-width: 600px;
             }
 
             .control-panel-left {
@@ -1024,3 +1024,4 @@ class KeychainEditor {
     }
   }
 }
+
