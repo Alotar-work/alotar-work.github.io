@@ -45,7 +45,6 @@ class KeychainEditor {
     this.currentSwapThreshold = this.originalSwapThreshold;
 
     this.isApplyResponsiveAwait = false;
-    this.isTemplateElementsAwait = false;
   }
 
   // Новый метод init, который принимает селектор для поиска целевого элемента
@@ -166,16 +165,16 @@ class KeychainEditor {
         height: canvasHeight,
       });
 
-      // Затем обновляем позиции всех элементов
-      this.updateElementPositions();
-
       // Перерисовываем канвас
       this.canvas.renderAll();
+
+      // Затем обновляем позиции всех элементов
+      this.updateElementPositions();
     } else if (!this.isApplyResponsiveAwait) {
       this.isApplyResponsiveAwait = true;
       setTimeout(() => {
-        this.applyResponsive();
         this.isApplyResponsiveAwait = false;
+        this.applyResponsive();
       }, 500);
     }
   }
@@ -214,8 +213,6 @@ class KeychainEditor {
     // Затем обновляем позиции шаблонных элементов
     this.templateElements.forEach((element) => {
       if (!element.onCord) {
-      console.log(this.currentCanvasWidth);
-        console.log(this.originalCanvasWidth);
         // Для элементов не на шнуре используем функцию getScaledPosition
         const scaledPos = this.getScaledPosition(
           element.originalLeft,
@@ -582,6 +579,7 @@ class KeychainEditor {
       this.canvas.add(cord);
       this.canvas.sendToBack(cord);
       this.canvas.renderAll();
+      this.updateElementPositions();
 
       // После добавления шнурка создаем элементы
       this.createElements();
@@ -1139,7 +1137,3 @@ class KeychainEditor {
     }
   }
 }
-
-
-
-
