@@ -174,8 +174,8 @@ class KeychainEditor {
     } else if (!this.isApplyResponsiveAwait) {
       this.isApplyResponsiveAwait = true;
       setTimeout(() => {
-        this.isApplyResponsiveAwait = false;
         this.applyResponsive();
+        this.isApplyResponsiveAwait = false;
       }, 500);
     }
   }
@@ -213,10 +213,10 @@ class KeychainEditor {
 
     if (this.templateElements.length != 4 && !this.isTemplateElementsAwait) {
       this.isTemplateElementsAwait = true;
-      console.log(111);
+      console.log(112);
       setTimeout(() => {
-        this.isTemplateElementsAwait = false;
         this.updateElementPositions();
+        this.isTemplateElementsAwait = false;
       }, 500);
       return;
     }
@@ -1145,3 +1145,4 @@ class KeychainEditor {
     }
   }
 }
+
