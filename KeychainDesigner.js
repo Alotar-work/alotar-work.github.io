@@ -876,7 +876,7 @@ class KeychainEditor {
         this.canvas.add(element);
         this.templateElements.push(element);
       });
-
+      this.updateElementPositions();
       this.canvas.renderAll();
     });
   }
@@ -1134,3 +1134,4 @@ class KeychainEditor {
     }
   }
 }
+
