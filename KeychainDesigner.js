@@ -45,6 +45,7 @@ class KeychainEditor {
     this.currentSwapThreshold = this.originalSwapThreshold;
 
     this.isApplyResponsiveAwait = false;
+    this.isTemplateElementsAwait = false;
   }
 
   // Новый метод init, который принимает селектор для поиска целевого элемента
@@ -209,6 +210,15 @@ class KeychainEditor {
     this.cordPositions.forEach((pos, index) => {
       pos.y = 5 + positionHeight * (index + 1);
     });
+
+    if (!this.templateElements && !this.isTemplateElementsAwait) {
+      this.isTemplateElementsAwait = true;
+      setTimeout(() => {
+        this.updateElementPositions();
+        this.isTemplateElementsAwait = false;
+      }, 500);
+      return;
+    }
 
     // Затем обновляем позиции шаблонных элементов
     this.templateElements.forEach((element) => {
@@ -1143,6 +1153,7 @@ class KeychainEditor {
     }
   }
 }
+
 
 
 
