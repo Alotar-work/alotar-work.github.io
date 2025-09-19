@@ -211,9 +211,9 @@ class KeychainEditor {
       pos.y = 5 + positionHeight * (index + 1);
     });
 
-    if (this.templateElements.length != 4 && !this.isTemplateElementsAwait) {
+    if (this.templateElements.length != 4) {
       this.isTemplateElementsAwait = true;
-      console.log(112);
+      console.log(113);
       setTimeout(() => {
         this.updateElementPositions();
         this.isTemplateElementsAwait = false;
@@ -1145,4 +1145,5 @@ class KeychainEditor {
     }
   }
 }
+
 
