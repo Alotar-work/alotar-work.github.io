@@ -211,11 +211,11 @@ class KeychainEditor {
       pos.y = 5 + positionHeight * (index + 1);
     });
 
-      console.log(114);
-    console.log(this.templateElements.length);
     // Затем обновляем позиции шаблонных элементов
     this.templateElements.forEach((element) => {
       if (!element.onCord) {
+      console.log(this.currentCanvasWidth);
+        console.log(this.originalCanvasWidth);
         // Для элементов не на шнуре используем функцию getScaledPosition
         const scaledPos = this.getScaledPosition(
           element.originalLeft,
@@ -1139,6 +1139,7 @@ class KeychainEditor {
     }
   }
 }
+
 
 
 
