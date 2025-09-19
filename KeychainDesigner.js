@@ -211,15 +211,7 @@ class KeychainEditor {
       pos.y = 5 + positionHeight * (index + 1);
     });
 
-    if (this.templateElements.length != 4) {
-      this.isTemplateElementsAwait = true;
-      console.log(113);
-      setTimeout(() => {
-        this.updateElementPositions();
-        this.isTemplateElementsAwait = false;
-      }, 500);
-      return;
-    }
+      console.log(114);
     console.log(this.templateElements.length);
     // Затем обновляем позиции шаблонных элементов
     this.templateElements.forEach((element) => {
@@ -889,6 +881,8 @@ class KeychainEditor {
       });
 
       this.canvas.renderAll();
+
+      this.updateElementPositions();
     });
   }
 
@@ -1145,5 +1139,6 @@ class KeychainEditor {
     }
   }
 }
+
 
 
