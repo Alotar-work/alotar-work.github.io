@@ -165,11 +165,11 @@ class KeychainEditor {
         height: canvasHeight,
       });
 
-      // Перерисовываем канвас
-      this.canvas.renderAll();
-
       // Затем обновляем позиции всех элементов
       this.updateElementPositions();
+
+      // Перерисовываем канвас
+      this.canvas.renderAll();
     } else if (!this.isApplyResponsiveAwait) {
       this.isApplyResponsiveAwait = true;
       setTimeout(() => {
@@ -579,7 +579,6 @@ class KeychainEditor {
       this.canvas.add(cord);
       this.canvas.sendToBack(cord);
       this.canvas.renderAll();
-      this.updateElementPositions();
 
       // После добавления шнурка создаем элементы
       this.createElements();
@@ -879,8 +878,6 @@ class KeychainEditor {
       });
 
       this.canvas.renderAll();
-
-      this.updateElementPositions();
     });
   }
 
