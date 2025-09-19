@@ -174,8 +174,8 @@ class KeychainEditor {
     } else if (!this.isApplyResponsiveAwait) {
       this.isApplyResponsiveAwait = true;
       setTimeout(() => {
-        this.applyResponsive();
         this.isApplyResponsiveAwait = false;
+        this.applyResponsive();
       }, 500);
     }
   }
@@ -221,7 +221,6 @@ class KeychainEditor {
       return;
     }
     console.log(this.templateElements.length);
-
     // Затем обновляем позиции шаблонных элементов
     this.templateElements.forEach((element) => {
       if (!element.onCord) {
@@ -442,8 +441,6 @@ class KeychainEditor {
 
     // Добавляем панель в контейнер канваса (после канваса)
     this.container.appendChild(this.controlPanel);
-
-    this.applyResponsive();
   }
 
   // Создаем модальное окно с инструкциями
@@ -637,11 +634,6 @@ class KeychainEditor {
         });
         circle.classList.add("active");
       });
-    });
-
-    // Обработка изменения размера окна
-    window.addEventListener("resize", () => {
-      this.applyResponsive();
     });
   }
 
@@ -896,8 +888,6 @@ class KeychainEditor {
         this.templateElements.push(element);
       });
 
-      // Сохраняем ссылки на элементы для использования в других функциях
-      window.templateElements = this.templateElements;
       this.canvas.renderAll();
     });
   }
@@ -1155,8 +1145,3 @@ class KeychainEditor {
     }
   }
 }
-
-
-
-
-
