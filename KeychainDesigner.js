@@ -168,6 +168,10 @@ class KeychainEditor {
 
       // Перерисовываем канвас
       this.canvas.renderAll();
+    } else {
+      setTimeout(() => {
+        this.applyResponsive();
+      }, 500);
     }
   }
 
@@ -1135,3 +1139,4 @@ class KeychainEditor {
     }
   }
 }
+
