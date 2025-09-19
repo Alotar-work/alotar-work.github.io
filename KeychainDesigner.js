@@ -166,7 +166,7 @@ class KeychainEditor {
       });
 
       // Затем обновляем позиции всех элементов
-      this.updateElementPositions(canvasWidth, canvasHeight);
+      this.updateElementPositions();
 
       // Перерисовываем канвас
       this.canvas.renderAll();
@@ -1143,5 +1143,6 @@ class KeychainEditor {
     }
   }
 }
+
 
 
