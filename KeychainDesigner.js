@@ -43,6 +43,8 @@ class KeychainEditor {
     this.currentDetachThreshold = this.originalDetachThreshold;
     this.currentAttachThreshold = this.originalAttachThreshold;
     this.currentSwapThreshold = this.originalSwapThreshold;
+
+    this.isApplyResponsiveAwait = false;
   }
 
   // Новый метод init, который принимает селектор для поиска целевого элемента
@@ -168,9 +170,11 @@ class KeychainEditor {
 
       // Перерисовываем канвас
       this.canvas.renderAll();
-    } else {
+    } else if (!this.isApplyResponsiveAwait) {
+      this.isApplyResponsiveAwait = true;
       setTimeout(() => {
         this.applyResponsive();
+        this.isApplyResponsiveAwait = false;
       }, 500);
     }
   }
@@ -1139,4 +1143,5 @@ class KeychainEditor {
     }
   }
 }
+
 
