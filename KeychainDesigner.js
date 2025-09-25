@@ -211,7 +211,7 @@ class KeychainEditor {
       let canvasHeight = canvasWidth * aspectRatio;
 
       // Ограничиваем высоту канваса 95% от высоты окна браузера
-      const maxCanvasHeight = window.innerHeight * 0.95;
+      const maxCanvasHeight = window.innerHeight * 0.85;
       if (canvasHeight > maxCanvasHeight) {
         canvasHeight = maxCanvasHeight;
         // Пересчитываем ширину с учетом ограниченной высоты
@@ -1097,3 +1097,4 @@ class KeychainEditor {
     }
   }
 }
+
