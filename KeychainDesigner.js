@@ -27,7 +27,6 @@ class KeychainEditor {
     this.templateElements = [];
     this.currentCordColor = "green"; // Текущий цвет шнурка
     this.controlPanel = null; // Панель управления в DOM
-    this.instructionsModal = null; // Модальное окно с инструкциями
     this.container = null; // Контейнер для канваса
     this.originalCanvasWidth = this.options.width; // Сохраняем исходную ширину канваса
     this.originalCanvasHeight = this.options.height; // Сохраняем исходную высоту канваса
@@ -75,9 +74,6 @@ class KeychainEditor {
 
     // Создаем панель управления (после канваса)
     this.createControlPanel();
-
-    // Создаем модальное окно с инструкциями
-    this.createInstructionsModal();
 
     // Создаем позиции на шнуре
     this.createCordPositions();
@@ -310,25 +306,6 @@ class KeychainEditor {
               background: #c0392b;
             }
 
-            .info-button {
-              width: 30px;
-              height: 30px;
-              border-radius: 50%;
-              background: #4a6fa5;
-              color: white;
-              border: none;
-              font-weight: bold;
-              cursor: pointer;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-size: 16px;
-            }
-
-            .info-button:hover {
-              background: #3a5a8a;
-            }
-
             .cord-label {
               font-weight: bold;
               color: #333;
@@ -373,15 +350,8 @@ class KeychainEditor {
     resetButton.textContent = "Сбросить";
     resetButton.id = "reset-button";
 
-    // Кнопка информации
-    const infoButton = document.createElement("button");
-    infoButton.className = "info-button";
-    infoButton.textContent = "i";
-    infoButton.id = "info-button";
-
     // Добавляем кнопки в левую часть
     leftPanel.appendChild(resetButton);
-    leftPanel.appendChild(infoButton);
 
     // Правая часть панели
     const rightPanel = document.createElement("div");
@@ -431,132 +401,6 @@ class KeychainEditor {
     this.container.appendChild(this.controlPanel);
   }
 
-  // Создаем модальное окно с инструкциями
-  createInstructionsModal() {
-    // Создаем стили для модального окна
-    const modalStyle = document.createElement("style");
-    modalStyle.textContent = `
-            .instructions-modal {
-              display: none;
-              position: fixed;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              background: rgba(0,0,0,0.5);
-              z-index: 1000;
-              justify-content: center;
-              align-items: center;
-            }
-
-            .instructions-modal-content {
-              background: white;
-              padding: 20px;
-              border-radius: 10px;
-              max-width: 500px;
-              width: 90%;
-              box-shadow: 0 0 20px rgba(0,0,0,0.2);
-            }
-
-            .instructions-modal-header {
-              font-size: 18px;
-              font-weight: bold;
-              margin-bottom: 15px;
-              color: #333;
-            }
-
-            .instructions-modal-body {
-              color: #555;
-              line-height: 1.6;
-            }
-
-            .instructions-modal-body ol {
-              padding-left: 20px;
-            }
-
-            .instructions-modal-body li {
-              margin-bottom: 10px;
-            }
-
-            .instructions-modal-close {
-              margin-top: 15px;
-              background: #4a6fa5;
-              color: white;
-              border: none;
-              padding: 8px 15px;
-              border-radius: 5px;
-              cursor: pointer;
-              font-size: 14px;
-            }
-
-            .instructions-modal-close:hover {
-              background: #3a5a8a;
-            }
-          `;
-    document.head.appendChild(modalStyle);
-
-    // Создаем модальное окно
-    this.instructionsModal = document.createElement("div");
-    this.instructionsModal.className = "instructions-modal";
-    this.instructionsModal.id = "instructions-modal";
-
-    // Создаем содержимое модального окна
-    const modalContent = document.createElement("div");
-    modalContent.className = "instructions-modal-content";
-
-    // Заголовок модального окна
-    const modalHeader = document.createElement("div");
-    modalHeader.className = "instructions-modal-header";
-    modalHeader.textContent = "Инструкция:";
-
-    // Тело модального окна
-    const modalBody = document.createElement("div");
-    modalBody.className = "instructions-modal-body";
-
-    // Создаем список инструкций
-    const instructionsList = document.createElement("ol");
-
-    const instruction1 = document.createElement("li");
-    instruction1.textContent = "Перетащите элемент на шнур";
-
-    const instruction2 = document.createElement("li");
-    instruction2.textContent = "Разместить 4 элемента на шнуре";
-
-    const instruction3 = document.createElement("li");
-    instruction3.textContent = "Элементы на шнуре можно менять местами";
-
-    const instruction4 = document.createElement("li");
-    instruction4.textContent = "Сдвиньте элемент в сторону, чтобы открепить";
-
-    const instruction5 = document.createElement("li");
-    instruction5.textContent = 'Нажмите "Готово", когда соберёте брелок';
-
-    // Добавляем инструкции в список
-    instructionsList.appendChild(instruction1);
-    instructionsList.appendChild(instruction2);
-    instructionsList.appendChild(instruction3);
-    instructionsList.appendChild(instruction4);
-    instructionsList.appendChild(instruction5);
-
-    // Добавляем список в тело модального окна
-    modalBody.appendChild(instructionsList);
-
-    // Кнопка закрытия модального окна
-    const closeButton = document.createElement("button");
-    closeButton.className = "instructions-modal-close";
-    closeButton.id = "close-instructions";
-    closeButton.textContent = "Закрыть";
-
-    // Собираем модальное окно
-    modalContent.appendChild(modalHeader);
-    modalContent.appendChild(modalBody);
-    modalContent.appendChild(closeButton);
-    this.instructionsModal.appendChild(modalContent);
-
-    // Добавляем модальное окно в body
-    document.body.appendChild(this.instructionsModal);
-  }
-
   createCordPositions() {
     // Используем относительное значение отступа вместо фиксированного 150
     const positionHeight =
@@ -588,26 +432,6 @@ class KeychainEditor {
     // Обработчик клика на кнопку сброса
     document.getElementById("reset-button").addEventListener("click", () => {
       this.reset();
-    });
-
-    // Обработчик клика на значок информации
-    document.getElementById("info-button").addEventListener("click", () => {
-      // Показываем модальное окно
-      this.instructionsModal.style.display = "flex";
-    });
-
-    // Обработчик закрытия модального окна
-    document
-      .getElementById("close-instructions")
-      .addEventListener("click", () => {
-        this.instructionsModal.style.display = "none";
-      });
-
-    // Закрытие модального окна при клике вне его
-    this.instructionsModal.addEventListener("click", (e) => {
-      if (e.target === this.instructionsModal) {
-        this.instructionsModal.style.display = "none";
-      }
     });
 
     // Обработчики клика на кружки выбора цвета шнурка
@@ -1134,5 +958,6 @@ class KeychainEditor {
     }
   }
 }
+
 
 
