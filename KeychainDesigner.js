@@ -292,23 +292,29 @@ class KeychainEditor {
             }
 
             .reset-button {
-              background: #e74c3c;
-              color: white;
-              border: none;
+              background: transparent;
+              border: 2px solid black;
               padding: 8px 15px;
-              border-radius: 5px;
               cursor: pointer;
-              font-size: 14px;
               transition: background 0.3s;
+              font-size: 16px;
+              font-weight: regular;
+              font-style: regular;
+              font-family: 'Arial';
+              letter-spacing: 0em;
             }
 
             .reset-button:hover {
-              background: #c0392b;
+              background: black;
+              color: white;
             }
 
-            .cord-label {
-              font-weight: bold;
-              color: #333;
+            .cord-label {              
+              font-size: 16px;
+              font-weight: regular;
+              font-style: regular;
+              font-family: 'Arial';
+              letter-spacing: 0em;
             }
 
             .cord-colors {
@@ -958,6 +964,7 @@ class KeychainEditor {
     }
   }
 }
+
 
 
 
