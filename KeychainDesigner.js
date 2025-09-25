@@ -893,6 +893,7 @@ class KeychainEditor {
       this.canvas.add(cord);
       this.canvas.sendToBack(cord);
       this.canvas.renderAll();
+      this.applyResponsive();
     });
   }
 
@@ -1133,4 +1134,5 @@ class KeychainEditor {
     }
   }
 }
+
 
