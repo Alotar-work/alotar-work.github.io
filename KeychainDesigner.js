@@ -298,8 +298,6 @@ class KeychainEditor {
               cursor: pointer;
               transition: background 0.3s;
               font-size: 16px;
-              font-weight: regular;
-              font-style: regular;
               font-family: 'Arial';
               letter-spacing: 0em;
             }
@@ -311,8 +309,6 @@ class KeychainEditor {
 
             .cord-label {              
               font-size: 16px;
-              font-weight: regular;
-              font-style: regular;
               font-family: 'Arial';
               letter-spacing: 0em;
             }
@@ -964,6 +960,7 @@ class KeychainEditor {
     }
   }
 }
+
 
 
 
