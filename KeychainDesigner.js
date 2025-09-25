@@ -105,7 +105,7 @@ class KeychainEditor {
 
   setupCanvas() {
     this.canvas = new fabric.Canvas("keychain-canvas", {
-      backgroundColor: this.options.backgroundColor,
+      //backgroundColor: this.options.backgroundColor,
     });
 
     // Устанавливаем стили для канваса через JavaScript
@@ -274,7 +274,6 @@ class KeychainEditor {
     const style = document.createElement("style");
     style.textContent = `
             .control-panel {
-              background: #f0f0f0;
               border: 1px solid #ddd;
               padding: 15px 20px;
               display: flex;
@@ -1134,3 +1133,4 @@ class KeychainEditor {
     }
   }
 }
+
