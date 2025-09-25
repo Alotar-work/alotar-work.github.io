@@ -77,11 +77,14 @@ class KeychainEditor {
     // Настраиваем канвас (включая адаптивность)
     this.setupCanvas();
 
-    // Создаем полукольцо
-    this.createSemiRing();
-
     // Создаем панель управления (после канваса)
     this.createControlPanel();
+
+    // Применяем адаптивность перед созданием элементов
+    this.applyResponsive();
+
+    // Создаем полукольцо
+    this.createSemiRing();
 
     // Создаем позиции на шнуре
     this.createCordPositions();
@@ -116,18 +119,14 @@ class KeychainEditor {
     const canvasElement = document.getElementById("keychain-canvas");
     canvasElement.style.width = "100%";
     canvasElement.style.height = "auto";
-    canvasElement.style.maxWidth = "600px";
     canvasElement.style.display = "block";
     canvasElement.style.border = "1px solid #ddd";
     canvasElement.style.borderRadius = "5px";
-
-    // Применяем адаптивность при инициализации
-    this.applyResponsive();
   }
 
   // Создание полукольца с использованием Path
   createSemiRing() {
-    const centerX = this.options.width / 2;
+    const centerX = this.currentCanvasWidth / 2;
     const centerY = this.originalSemiRingWidth / 2; // Центр кольца на уровне радиуса от верха
     const outerRadius = this.originalSemiRingWidth / 2;
     const innerRadius = outerRadius - this.originalSemiRingThickness;
@@ -170,6 +169,17 @@ class KeychainEditor {
     };
   }
 
+  // Функция для преобразования текущих координат в исходные
+  getOriginalPosition(currentX, currentY) {
+    const scaleX = this.originalCanvasWidth / this.currentCanvasWidth;
+    const scaleY = this.originalCanvasHeight / this.currentCanvasHeight;
+
+    return {
+      x: currentX * scaleX,
+      y: currentY * scaleY,
+    };
+  }
+
   // Функция для обновления пороговых значений
   updateThresholds() {
     const scaleX = this.currentCanvasWidth / this.originalCanvasWidth;
@@ -183,15 +193,30 @@ class KeychainEditor {
 
   applyResponsive() {
     if (this.controlPanel) {
-      // Получаем текущую ширину контейнера
-      const containerWidth = this.controlPanel.clientWidth;
+      // Получаем текущую ширину контейнера с учетом padding
+      const containerStyle = window.getComputedStyle(this.container);
+      const containerPaddingLeft = parseFloat(containerStyle.paddingLeft) || 0;
+      const containerPaddingRight =
+        parseFloat(containerStyle.paddingRight) || 0;
+      const containerWidth =
+        this.container.clientWidth -
+        containerPaddingLeft -
+        containerPaddingRight;
 
-      // Вычисляем масштабируемую ширину канваса
-      const canvasWidth = Math.min(containerWidth, this.options.width);
+      // Используем всю доступную ширину контейнера
+      let canvasWidth = containerWidth;
 
       // Вычисляем масштабируемую высоту канваса (пропорционально)
       const aspectRatio = this.options.height / this.options.width;
-      const canvasHeight = canvasWidth * aspectRatio;
+      let canvasHeight = canvasWidth * aspectRatio;
+
+      // Ограничиваем высоту канваса 95% от высоты окна браузера
+      const maxCanvasHeight = window.innerHeight * 0.95;
+      if (canvasHeight > maxCanvasHeight) {
+        canvasHeight = maxCanvasHeight;
+        // Пересчитываем ширину с учетом ограниченной высоты
+        canvasWidth = canvasHeight / aspectRatio;
+      }
 
       // Обновляем размеры канваса
       this.currentCanvasWidth = canvasWidth;
@@ -303,8 +328,7 @@ class KeychainEditor {
       const centerX = this.currentCanvasWidth / 2;
       const centerY = (this.originalSemiRingWidth / 2) * scale; // Центр кольца на уровне радиуса от верха
       const outerRadius = (this.originalSemiRingWidth / 2) * scale;
-      const innerRadius =
-        outerRadius - this.originalSemiRingThickness * scale;
+      const innerRadius = outerRadius - this.originalSemiRingThickness * scale;
 
       // Создаем путь для полукольца (развернутого на 180 градусов)
       const path =
@@ -362,7 +386,8 @@ class KeychainEditor {
               align-items: center;
               justify-content: space-between;
               flex-wrap: wrap;
-              max-width: 560px;
+              width: 100%;
+              box-sizing: border-box;
             }
 
             .control-panel-left {
@@ -492,7 +517,7 @@ class KeychainEditor {
   createCordPositions() {
     // Используем относительное значение отступа вместо фиксированного 150
     const positionHeight =
-      (this.options.height * (1 - this.marginRatio)) /
+      (this.currentCanvasHeight * (1 - this.marginRatio)) /
       (this.options.maxElements + 1);
 
     for (let i = 1; i <= this.options.maxElements; i++) {
@@ -514,7 +539,7 @@ class KeychainEditor {
       if (this.semiRing) {
         this.canvas.sendToBack(this.semiRing);
       }
-      
+
       this.canvas.renderAll();
 
       // После добавления шнурка создаем элементы
@@ -551,13 +576,18 @@ class KeychainEditor {
           // Сохраняем соотношение сторон изображения шнурка
           this.cordImageAspectRatio = img.height / img.width;
 
-          // Устанавливаем начальные размеры изображения
+          // Рассчитываем размеры шнурка с учетом текущего размера канваса
+          const scaleX = this.currentCanvasWidth / this.originalCanvasWidth;
+          const scaleY = this.currentCanvasHeight / this.originalCanvasHeight;
+          const cordWidth = this.options.cordWidth * scaleX;
+          const cordHeight = cordWidth * this.cordImageAspectRatio;
+
+          // Устанавливаем размеры изображения
           img.set({
-            left: this.options.width / 2 - this.options.cordWidth / 2,
+            left: this.currentCanvasWidth / 2 - cordWidth / 2,
             top: 5,
-            scaleX: this.options.cordWidth / img.width,
-            scaleY:
-              (this.options.cordWidth * this.cordImageAspectRatio) / img.height,
+            scaleX: cordWidth / img.width,
+            scaleY: cordHeight / img.height,
             selectable: false,
             evented: false,
             lockMovementX: true,
@@ -580,8 +610,10 @@ class KeychainEditor {
       fabric.Image.fromURL(
         imageUrl,
         (img) => {
-          // Устанавливаем размеры изображения 100x100 пикселей
-          const targetSize = 100;
+          // Рассчитываем масштаб с учетом текущего размера канваса
+          const scaleX = this.currentCanvasWidth / this.originalCanvasWidth;
+          const scaleY = this.currentCanvasHeight / this.originalCanvasHeight;
+          const targetSize = 100 * Math.min(scaleX, scaleY);
 
           img.set({
             left: position.x + targetSize / 2,
@@ -641,6 +673,13 @@ class KeychainEditor {
     // Добавляем все элементы на canvas после их загрузки
     Promise.all(elementPromises).then((elements) => {
       elements.forEach((element) => {
+        // Преобразуем текущие координаты в исходные для правильного масштабирования
+        const originalPos = this.getOriginalPosition(element.left, element.top);
+
+        // Обновляем исходные координаты элемента
+        element.originalLeft = originalPos.x;
+        element.originalTop = originalPos.y;
+
         // Добавляем обработчики событий для перетаскивания
         element.on("moving", () => {
           if (element.onCord && !element.isDetaching) {
@@ -793,7 +832,6 @@ class KeychainEditor {
         this.canvas.add(element);
         this.templateElements.push(element);
       });
-      this.applyResponsive();
       this.canvas.renderAll();
     });
   }
@@ -815,7 +853,7 @@ class KeychainEditor {
       if (this.semiRing) {
         this.canvas.sendToBack(this.semiRing);
       }
-      
+
       this.canvas.renderAll();
       this.applyResponsive();
     });
@@ -856,21 +894,23 @@ class KeychainEditor {
       // Добавляем позицию в соответствующий массив
       positionsArray.push(newPosition);
 
+      // Преобразуем текущие координаты в исходные для правильного масштабирования
+      const originalPos = this.getOriginalPosition(
+        newPosition.x + 50,
+        newPosition.y + 50
+      );
+
       // Обновляем исходные координаты элемента
-      element.originalLeft = newPosition.x + 50;
-      element.originalTop = newPosition.y + 50;
+      element.originalLeft = originalPos.x;
+      element.originalTop = originalPos.y;
 
       // Анимированно перемещаем элемент на новую позицию
-      const scaledPos = this.getScaledPosition(
-        element.originalLeft,
-        element.originalTop
-      );
       this.animateElement(
         element,
         element.left,
         element.top,
-        scaledPos.x,
-        scaledPos.y
+        newPosition.x + 50,
+        newPosition.y + 50
       );
     });
 
@@ -879,7 +919,6 @@ class KeychainEditor {
       pos.occupied = false;
       pos.element = null;
     });
-    this.applyResponsive();
     this.canvas.renderAll();
   }
 
@@ -918,7 +957,7 @@ class KeychainEditor {
   }
 
   getRandomPosition(side, elementSize = 100) {
-    const cordCenterX = this.options.width / 2;
+    const cordCenterX = this.currentCanvasWidth / 2;
     const margin = 30;
 
     let minX, maxX;
@@ -928,11 +967,11 @@ class KeychainEditor {
       maxX = cordCenterX - this.options.cordWidth / 2 - margin - elementSize;
     } else {
       minX = cordCenterX + this.options.cordWidth / 2 + margin;
-      maxX = this.options.width - margin - elementSize;
+      maxX = this.currentCanvasWidth - margin - elementSize;
     }
 
     const minY = margin + 50; // Уменьшаем отступ сверху, так как высота канваса уменьшилась
-    const maxY = this.options.height - margin - elementSize;
+    const maxY = this.currentCanvasHeight - margin - elementSize;
 
     const x = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
     const y = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
@@ -1058,9 +1097,3 @@ class KeychainEditor {
     }
   }
 }
-
-
-
-
-
-
