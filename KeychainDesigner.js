@@ -44,6 +44,11 @@ class KeychainEditor {
     this.currentSwapThreshold = this.originalSwapThreshold;
 
     this.isApplyResponsiveAwait = false;
+
+    // Параметры полукольца
+    this.originalSemiRingWidth = 100; // Ширина кольца (диаметр)
+    this.originalSemiRingThickness = 10; // Толщина кольца
+    this.semiRing = null;
   }
 
   // Новый метод init, который принимает селектор для поиска целевого элемента
@@ -71,6 +76,9 @@ class KeychainEditor {
 
     // Настраиваем канвас (включая адаптивность)
     this.setupCanvas();
+
+    // Создаем полукольцо
+    this.createSemiRing();
 
     // Создаем панель управления (после канваса)
     this.createControlPanel();
@@ -115,6 +123,40 @@ class KeychainEditor {
 
     // Применяем адаптивность при инициализации
     this.applyResponsive();
+  }
+
+  // Создание полукольца с использованием Path
+  createSemiRing() {
+    const centerX = this.options.width / 2;
+    const centerY = this.originalSemiRingWidth / 2; // Центр кольца на уровне радиуса от верха
+    const outerRadius = this.originalSemiRingWidth / 2;
+    const innerRadius = outerRadius - this.originalSemiRingThickness;
+
+    // Создаем путь для полукольца (развернутого на 180 градусов)
+    const path =
+      `M ${centerX - outerRadius},${centerY} ` +
+      `A ${outerRadius},${outerRadius} 0 0 0 ${
+        centerX + outerRadius
+      },${centerY} ` +
+      `L ${centerX + innerRadius},${centerY} ` +
+      `A ${innerRadius},${innerRadius} 0 0 1 ${
+        centerX - innerRadius
+      },${centerY} ` +
+      `Z`;
+
+    this.semiRing = new fabric.Path(path, {
+      fill: "#000000", // Черный цвет
+      selectable: false,
+      evented: false,
+      originX: "center",
+      originY: "center",
+      left: centerX,
+      top: 0, // Устанавливаем top равным нулю
+      name: "semiRing",
+    });
+
+    this.canvas.add(this.semiRing);
+    this.canvas.sendToBack(this.semiRing);
   }
 
   // Новая функция для расчета масштабированных позиций
@@ -246,6 +288,50 @@ class KeychainEditor {
       // Важно: обновляем координаты после изменения позиции
       element.setCoords();
     });
+
+    // Обновляем позицию и размеры полукольца
+    if (this.semiRing) {
+      const scaleX = this.currentCanvasWidth / this.originalCanvasWidth;
+      const scaleY = this.currentCanvasHeight / this.originalCanvasHeight;
+
+      // Используем средний коэффициент масштабирования, чтобы не искажать
+      const scale = (scaleX + scaleY) / 2;
+
+      // Пересоздаем полукольцо с новыми размерами
+      this.canvas.remove(this.semiRing);
+
+      const centerX = this.currentCanvasWidth / 2;
+      const centerY = (this.originalSemiRingWidth / 2) * scale; // Центр кольца на уровне радиуса от верха
+      const outerRadius = (this.originalSemiRingWidth / 2) * scale;
+      const innerRadius =
+        outerRadius - this.originalSemiRingThickness * scale;
+
+      // Создаем путь для полукольца (развернутого на 180 градусов)
+      const path =
+        `M ${centerX - outerRadius},${centerY} ` +
+        `A ${outerRadius},${outerRadius} 0 0 0 ${
+          centerX + outerRadius
+        },${centerY} ` +
+        `L ${centerX + innerRadius},${centerY} ` +
+        `A ${innerRadius},${innerRadius} 0 0 1 ${
+          centerX - innerRadius
+        },${centerY} ` +
+        `Z`;
+
+      this.semiRing = new fabric.Path(path, {
+        fill: "#000000", // Черный цвет
+        selectable: false,
+        evented: false,
+        originX: "center",
+        originY: "center",
+        left: centerX,
+        top: 0, // Устанавливаем top равным нулю
+        name: "semiRing",
+      });
+
+      this.canvas.add(this.semiRing);
+      this.canvas.sendToBack(this.semiRing);
+    }
 
     // Обновляем пороговые значения
     this.updateThresholds();
@@ -423,6 +509,12 @@ class KeychainEditor {
       this.currentCord = cord;
       this.canvas.add(cord);
       this.canvas.sendToBack(cord);
+
+      // Убедимся, что полукольцо остается на заднем плане
+      if (this.semiRing) {
+        this.canvas.sendToBack(this.semiRing);
+      }
+      
       this.canvas.renderAll();
 
       // После добавления шнурка создаем элементы
@@ -718,6 +810,12 @@ class KeychainEditor {
       this.currentCord = cord;
       this.canvas.add(cord);
       this.canvas.sendToBack(cord);
+
+      // Убедимся, что полукольцо остается на заднем плане
+      if (this.semiRing) {
+        this.canvas.sendToBack(this.semiRing);
+      }
+      
       this.canvas.renderAll();
       this.applyResponsive();
     });
@@ -960,6 +1058,7 @@ class KeychainEditor {
     }
   }
 }
+
 
 
 
