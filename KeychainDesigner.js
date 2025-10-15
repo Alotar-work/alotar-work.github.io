@@ -323,7 +323,6 @@ class KeychainEditor {
     const style = document.createElement("style");
     style.textContent = `
             .control-panel { padding: 15px 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; width: 100%; box-sizing: border-box; }
-            .control-panel-secondary { padding: 0 0 15px 0; display: flex; align-items: center; gap: 15px; width: 100%; box-sizing: border-box; }
             .control-panel-left { display: flex; align-items: center; gap: 15px; }
             .control-panel-right { display: flex; align-items: center; gap: 15px; }
             .reset-button, .random-button { background: transparent; border: 2px solid black; padding: 8px 15px; cursor: pointer; transition: background 0.3s; font-size: 16px; font-family: 'Arial'; letter-spacing: 0em; }
@@ -380,27 +379,6 @@ class KeychainEditor {
     this.controlPanel.appendChild(leftPanel);
     this.controlPanel.appendChild(rightPanel);
     this.container.appendChild(this.controlPanel);
-
-    // --- Новая панель для выбора максимального количества ---
-    const secondaryPanel = document.createElement("div");
-    secondaryPanel.className = "control-panel-secondary";
-    const maxElementsLabel = document.createElement("span");
-    maxElementsLabel.className = "max-elements-label";
-    maxElementsLabel.textContent = "Макс. элементов:";
-    const maxElementsSelect = document.createElement("select");
-    maxElementsSelect.className = "max-elements-select";
-    maxElementsSelect.id = "max-elements-selector";
-    const option4 = document.createElement("option");
-    option4.value = "4";
-    option4.textContent = "4";
-    const option8 = document.createElement("option");
-    option8.value = "8";
-    option8.textContent = "8";
-    maxElementsSelect.appendChild(option4);
-    maxElementsSelect.appendChild(option8);
-    secondaryPanel.appendChild(maxElementsLabel);
-    secondaryPanel.appendChild(maxElementsSelect);
-    this.container.appendChild(secondaryPanel);
   }
 
   initCord() {
@@ -423,12 +401,6 @@ class KeychainEditor {
     document.getElementById("random-button").addEventListener("click", () => {
       this.generateRandomKeychain();
     });
-    document
-      .getElementById("max-elements-selector")
-      .addEventListener("change", (e) => {
-        const newMax = parseInt(e.target.value, 10);
-        this.setMaxElements(newMax);
-      });
     document.querySelectorAll(".cord-color").forEach((circle) => {
       circle.addEventListener("click", () => {
         const color = circle.dataset.color;
