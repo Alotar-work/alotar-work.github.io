@@ -323,11 +323,14 @@ class KeychainEditor {
     const style = document.createElement("style");
     style.textContent = `
             .control-panel { padding: 15px 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; width: 100%; box-sizing: border-box; }
+            .control-panel-secondary { padding: 0 0 15px 0; display: flex; align-items: center; gap: 15px; width: 100%; box-sizing: border-box; }
             .control-panel-left { display: flex; align-items: center; gap: 15px; }
             .control-panel-right { display: flex; align-items: center; gap: 15px; }
             .reset-button, .random-button { background: transparent; border: 2px solid black; padding: 8px 15px; cursor: pointer; transition: background 0.3s; font-size: 16px; font-family: 'Arial'; letter-spacing: 0em; }
             .reset-button:hover, .random-button:hover { background: black; color: white; }
             .cord-label { font-size: 16px; font-family: 'Arial'; letter-spacing: 0em; }
+            .max-elements-label { font-size: 16px; font-family: 'Arial'; letter-spacing: 0em; }
+            .max-elements-select { padding: 8px; border: 2px solid black; background: white; cursor: pointer; font-size: 16px; font-family: 'Arial'; }
             .cord-colors { display: flex; gap: 10px; }
             .cord-color { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: border 0.3s; }
             .cord-color:hover { border-color: #333; }
@@ -377,6 +380,27 @@ class KeychainEditor {
     this.controlPanel.appendChild(leftPanel);
     this.controlPanel.appendChild(rightPanel);
     this.container.appendChild(this.controlPanel);
+
+    // --- Новая панель для выбора максимального количества ---
+    const secondaryPanel = document.createElement("div");
+    secondaryPanel.className = "control-panel-secondary";
+    const maxElementsLabel = document.createElement("span");
+    maxElementsLabel.className = "max-elements-label";
+    maxElementsLabel.textContent = "Макс. элементов:";
+    const maxElementsSelect = document.createElement("select");
+    maxElementsSelect.className = "max-elements-select";
+    maxElementsSelect.id = "max-elements-selector";
+    const option4 = document.createElement("option");
+    option4.value = "4";
+    option4.textContent = "4";
+    const option8 = document.createElement("option");
+    option8.value = "8";
+    option8.textContent = "8";
+    maxElementsSelect.appendChild(option4);
+    maxElementsSelect.appendChild(option8);
+    secondaryPanel.appendChild(maxElementsLabel);
+    secondaryPanel.appendChild(maxElementsSelect);
+    this.container.appendChild(secondaryPanel);
   }
 
   initCord() {
@@ -399,6 +423,12 @@ class KeychainEditor {
     document.getElementById("random-button").addEventListener("click", () => {
       this.generateRandomKeychain();
     });
+    document
+      .getElementById("max-elements-selector")
+      .addEventListener("change", (e) => {
+        const newMax = parseInt(e.target.value, 10);
+        this.setMaxElements(newMax);
+      });
     document.querySelectorAll(".cord-color").forEach((circle) => {
       circle.addEventListener("click", () => {
         const color = circle.dataset.color;
@@ -878,6 +908,45 @@ class KeychainEditor {
         700 // duration
       );
     });
+  }
+
+  // НОВЫЙ публичный метод для изменения максимального количества элементов
+  setMaxElements(newMax) {
+    if (newMax < 1) return; // Не позволяем установить 0 или отрицательное значение
+
+    this.options.maxElements = newMax;
+
+    // Если текущее количество элементов на шнурке больше нового лимита
+    if (this.elementsOnCord.length > newMax) {
+      // Удаляем лишние элементы (с конца)
+      const elementsToRemove = this.elementsOnCord.splice(newMax);
+
+      elementsToRemove.forEach((element) => {
+        element.onCord = false;
+        element.positionIndex = -1;
+        const elementSize = this.options.elementWidth;
+        const newPosition = this.getRandomPosition(
+          element.originalSide,
+          elementSize
+        );
+        const originalPos = this.getOriginalPosition(
+          newPosition.x,
+          newPosition.y
+        );
+        element.originalLeft = originalPos.x;
+        element.originalTop = originalPos.y;
+        this.animateElement(
+          element,
+          element.left,
+          element.top,
+          newPosition.x,
+          newPosition.y
+        );
+      });
+    }
+
+    // Перераспределяем и центрируем оставшиеся элементы на шнурке
+    this.updateCordElements();
   }
 
   getResultJson() {
