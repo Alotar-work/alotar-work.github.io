@@ -5,25 +5,37 @@ class KeychainEditor {
       height: 500, // Уменьшаем высоту канваса, так как панель теперь под ним
       backgroundColor: options.backgroundColor || "#f9f9f9",
       cordWidth: options.cordWidth || 100,
+      elementWidth: options.elementWidth || 50,
       cordColor: options.cordColor || "#555",
       maxElements: options.maxElements || 4,
       cordUrls: options.cordUrls || {
         green:
-          "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-e2aacb4b0c724ab91dbb67fd454395bd.png",
-        gray: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-feb60a4aebc511c7d82b5e41167ead38.png",
-        blue: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-418dccd27f75ff59e19dd9307db9a4ab.png",
+          "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-0d9833be6231cc92420d3833ee256081.png",
+        gray: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-746c02d60c2d7f87e1ffde532e5cb2b6.png",
+        blue: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-c1d379781b124ce9b9469fa92985f6bd.png",
       },
       elementsData: options.elementsData || [
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-188f5c0d7dff3482d5fd48544b0d69b1.png",
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-adf4350d037d0422b1a2c6271d153640.png",
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-cf96b243eb89e85ea431646882121a54.png",
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-7a9c95e3b00b36c39188d1c5756d086d.png",
+        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-5378eb609fb01b0349d93ce03d2591f6.png",
+        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-3ff04cbf7b4ce6971309bff88d765305.png",
+        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-510805ebcf41c5a0556f357b5d4eba9d.png",
+        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-c3590ee9e6cedf63e373b4b74ac8d326.png",
+        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-ba5882596978692d1c2d7c426b08023b.png",
+        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-1528282b3ee8054680b75e96deabaf06.png",
+        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-b76a2903684594c4f90ac5da76270fa4.png",
+        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-2ad94fee17e1f8c05c5c73dc50c5a366.png",
+        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-50d8afa3c95316e40701ca5911d2882f.png",
+        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-13201cafdab9d6c5a59e6faf17f0e1a2.png",
+        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-c242ab6d96120f678b8ce568213dab42.png",
+        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-b26f400811363f2decf849fc49f3fcb6.png",
+        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-406215077c57ae0674696857565d4de4.png",
+        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-17e661b4879d6a3513f081848050d73f.png",
+        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-0b3235414e47c14968ff4ebdb1b9e47c.png",
       ],
     };
 
     this.canvas = null;
     this.currentCord = null;
-    this.cordPositions = [];
+    this.elementsOnCord = []; // Массив для хранения элементов на шнурке
     this.templateElements = [];
     this.currentCordColor = "green"; // Текущий цвет шнурка
     this.controlPanel = null; // Панель управления в DOM
@@ -31,7 +43,6 @@ class KeychainEditor {
     this.originalCanvasWidth = this.options.width; // Сохраняем исходную ширину канваса
     this.originalCanvasHeight = this.options.height; // Сохраняем исходную высоту канваса
     this.cordImageAspectRatio = null; // Сохраняем соотношение сторон изображения шнурка
-    this.marginRatio = 150 / this.options.height; // Соотношение отступа для позиций на шнуре
     this.currentCanvasWidth = this.options.width; // Текущая ширина канваса
     this.currentCanvasHeight = this.options.height; // Текущая высота канваса
 
@@ -47,20 +58,14 @@ class KeychainEditor {
 
     // Параметры полукольца
     this.originalSemiRingWidth = 100; // Ширина кольца (диаметр)
-    this.originalSemiRingThickness = 10; // Толщина кольца
+    this.originalSemiRingThickness = 7; // Толщина кольца
     this.semiRing = null;
   }
 
-  // Новый метод init, который принимает селектор для поиска целевого элемента
   init(targetElementSelector) {
-    // Ищем элемент по селектору
     this.container = document.querySelector(targetElementSelector);
-
     if (this.container) {
-      // Элемент найден, очищаем его содержимое
       this.container.innerHTML = "";
-
-      // Инициализируем остальные компоненты
       this.initializeEditor();
     } else {
       console.error(
@@ -69,69 +74,49 @@ class KeychainEditor {
     }
   }
 
-  // Переименовываем старый метод init в initializeEditor
   initializeEditor() {
-    // Сначала создаем канвас
     this.createCanvas();
-
-    // Настраиваем канвас (включая адаптивность)
     this.setupCanvas();
-
-    // Создаем панель управления (после канваса)
     this.createControlPanel();
-
-    // Применяем адаптивность перед созданием элементов
-    this.applyResponsive();
-
-    // Создаем полукольцо
     this.createSemiRing();
-
-    // Создаем позиции на шнуре
-    this.createCordPositions();
-
-    // Инициализируем шнур
     this.initCord();
-
-    // Устанавливаем обработчики событий
     this.setupEventListeners();
-
-    // Настраиваем наблюдатель за изменением размера
     this.setupResizeObserver();
+    setTimeout(() => {
+      this.applyResponsive();
+    }, 500);
   }
 
   createCanvas() {
     const canvasElement = document.createElement("canvas");
     canvasElement.id = "keychain-canvas";
-
-    // Устанавливаем базовые размеры канваса
     canvasElement.width = this.options.width;
     canvasElement.height = this.options.height;
-
     this.container.appendChild(canvasElement);
   }
 
   setupCanvas() {
-    this.canvas = new fabric.Canvas("keychain-canvas", {
-      //backgroundColor: this.options.backgroundColor,
-    });
-
-    // Устанавливаем стили для канваса через JavaScript
+    this.canvas = new fabric.Canvas("keychain-canvas", {});
     const canvasElement = document.getElementById("keychain-canvas");
     canvasElement.style.width = "100%";
     canvasElement.style.height = "auto";
     canvasElement.style.display = "block";
     canvasElement.style.border = "1px solid #ddd";
-    canvasElement.style.borderRadius = "5px";
   }
 
-  // Создание полукольца с использованием Path
   createSemiRing() {
     const centerX = this.currentCanvasWidth / 2;
-    const centerY = this.originalSemiRingWidth / 2; // Центр кольца на уровне радиуса от верха
-    const outerRadius = this.originalSemiRingWidth / 2;
-    const innerRadius = outerRadius - this.originalSemiRingThickness;
+    const centerY =
+      (this.originalSemiRingWidth / 2) *
+      (this.currentCanvasHeight / this.originalCanvasHeight);
+    const outerRadius =
+      (this.originalSemiRingWidth / 2) *
+      (this.currentCanvasHeight / this.originalCanvasHeight);
+    const innerRadius =
+      outerRadius -
+      this.originalSemiRingThickness *
+        (this.currentCanvasHeight / this.originalCanvasHeight);
 
-    // Создаем путь для полукольца (развернутого на 180 градусов)
     const path =
       `M ${centerX - outerRadius},${centerY} ` +
       `A ${outerRadius},${outerRadius} 0 0 0 ${
@@ -144,13 +129,13 @@ class KeychainEditor {
       `Z`;
 
     this.semiRing = new fabric.Path(path, {
-      fill: "#000000", // Черный цвет
+      fill: "#000000",
       selectable: false,
       evented: false,
       originX: "center",
       originY: "center",
       left: centerX,
-      top: 0, // Устанавливаем top равным нулю
+      top: 0,
       name: "semiRing",
     });
 
@@ -158,34 +143,21 @@ class KeychainEditor {
     this.canvas.sendToBack(this.semiRing);
   }
 
-  // Новая функция для расчета масштабированных позиций
   getScaledPosition(originalX, originalY) {
     const scaleX = this.currentCanvasWidth / this.originalCanvasWidth;
     const scaleY = this.currentCanvasHeight / this.originalCanvasHeight;
-
-    return {
-      x: originalX * scaleX,
-      y: originalY * scaleY,
-    };
+    return { x: originalX * scaleX, y: originalY * scaleY };
   }
 
-  // Функция для преобразования текущих координат в исходные
   getOriginalPosition(currentX, currentY) {
     const scaleX = this.originalCanvasWidth / this.currentCanvasWidth;
     const scaleY = this.originalCanvasHeight / this.currentCanvasHeight;
-
-    return {
-      x: currentX * scaleX,
-      y: currentY * scaleY,
-    };
+    return { x: currentX * scaleX, y: currentY * scaleY };
   }
 
-  // Функция для обновления пороговых значений
   updateThresholds() {
     const scaleX = this.currentCanvasWidth / this.originalCanvasWidth;
     const scaleY = this.currentCanvasHeight / this.originalCanvasHeight;
-
-    // Обновляем пороговые значения
     this.currentDetachThreshold = this.originalDetachThreshold * scaleX;
     this.currentAttachThreshold = this.originalAttachThreshold * scaleX;
     this.currentSwapThreshold = this.originalSwapThreshold * scaleY;
@@ -193,7 +165,6 @@ class KeychainEditor {
 
   applyResponsive() {
     if (this.controlPanel) {
-      // Получаем текущую ширину контейнера с учетом padding
       const containerStyle = window.getComputedStyle(this.container);
       const containerPaddingLeft = parseFloat(containerStyle.paddingLeft) || 0;
       const containerPaddingRight =
@@ -203,35 +174,24 @@ class KeychainEditor {
         containerPaddingLeft -
         containerPaddingRight;
 
-      // Используем всю доступную ширину контейнера
       let canvasWidth = containerWidth;
-
-      // Вычисляем масштабируемую высоту канваса (пропорционально)
       const aspectRatio = this.options.height / this.options.width;
       let canvasHeight = canvasWidth * aspectRatio;
 
-      // Ограничиваем высоту канваса 95% от высоты окна браузера
-      const maxCanvasHeight = window.innerHeight * 0.85;
+      const maxCanvasHeight = window.innerHeight * 0.95;
       if (canvasHeight > maxCanvasHeight) {
         canvasHeight = maxCanvasHeight;
-        // Пересчитываем ширину с учетом ограниченной высоты
         canvasWidth = canvasHeight / aspectRatio;
       }
 
-      // Обновляем размеры канваса
       this.currentCanvasWidth = canvasWidth;
       this.currentCanvasHeight = canvasHeight;
 
-      // Важно: сначала обновляем размеры канваса
       this.canvas.setDimensions({
         width: canvasWidth,
         height: canvasHeight,
       });
-
-      // Затем обновляем позиции всех элементов
       this.updateElementPositions();
-
-      // Перерисовываем канвас
       this.canvas.renderAll();
     } else if (!this.isApplyResponsiveAwait) {
       this.isApplyResponsiveAwait = true;
@@ -243,17 +203,11 @@ class KeychainEditor {
   }
 
   updateElementPositions() {
-    // Обновляем позиции элементов на шнуре
     if (this.currentCord) {
-      // Шнурок должен занимать всю высоту канваса (с небольшими отступами)
-      const cordHeight = this.currentCanvasHeight - 10; // 5px сверху и 5px снизу
-      const cordWidth = cordHeight / this.cordImageAspectRatio; // Вычисляем ширину, сохраняя пропорции
-
-      // Размещаем шнурок по центру
+      const cordHeight = this.currentCanvasHeight - 10;
+      const cordWidth = cordHeight / this.cordImageAspectRatio;
       const cordLeft = (this.currentCanvasWidth - cordWidth) / 2;
-      const cordTop = 5; // Отступ сверху
-
-      // Обновляем размеры и позицию шнурка
+      const cordTop = 0;
       this.currentCord.set({
         left: cordLeft,
         top: cordTop,
@@ -263,270 +217,150 @@ class KeychainEditor {
       this.currentCord.setCoords();
     }
 
-    // Используем относительное значение отступа вместо фиксированного 150
-    const positionHeight =
-      (this.currentCanvasHeight * (1 - this.marginRatio)) /
-      (this.options.maxElements + 1);
+    // Обновляем позиции элементов на шнурке
+    this.updateCordElements();
 
-    // Сначала обновляем позиции на шнуре
-    this.cordPositions.forEach((pos, index) => {
-      pos.y = 5 + positionHeight * (index + 1);
-    });
-
-    // Затем обновляем позиции шаблонных элементов
     this.templateElements.forEach((element) => {
+      const targetWidth =
+        this.options.elementWidth *
+        (this.currentCanvasWidth / this.originalCanvasWidth);
+      const elementScale = targetWidth / element.width;
+
       if (!element.onCord) {
-        // Для элементов не на шнуре используем функцию getScaledPosition
         const scaledPos = this.getScaledPosition(
           element.originalLeft,
           element.originalTop
         );
-
         element.set({
           left: scaledPos.x,
           top: scaledPos.y,
-          scaleX:
-            (this.currentCanvasWidth / this.originalCanvasWidth) *
-            (100 / element.width),
-          scaleY:
-            (this.currentCanvasHeight / this.originalCanvasHeight) *
-            (100 / element.height),
+          scaleX: elementScale,
+          scaleY: elementScale,
         });
-      } else {
-        // Элементы на шнуре
-        const positionIndex = element.positionIndex;
-        if (positionIndex >= 0 && positionIndex < this.cordPositions.length) {
-          // Обновляем позицию на шнуре
-          const positionY = this.cordPositions[positionIndex].y;
-          element.set({
-            left: this.currentCanvasWidth / 2,
-            top: positionY,
-            scaleX:
-              (this.currentCanvasWidth / this.originalCanvasWidth) *
-              (100 / element.width),
-            scaleY:
-              (this.currentCanvasHeight / this.originalCanvasHeight) *
-              (100 / element.height),
-          });
-        }
       }
-      // Важно: обновляем координаты после изменения позиции
       element.setCoords();
     });
 
-    // Обновляем позицию и размеры полукольца
     if (this.semiRing) {
-      const scaleX = this.currentCanvasWidth / this.originalCanvasWidth;
-      const scaleY = this.currentCanvasHeight / this.originalCanvasHeight;
-
-      // Используем средний коэффициент масштабирования, чтобы не искажать
-      const scale = (scaleX + scaleY) / 2;
-
-      // Пересоздаем полукольцо с новыми размерами
       this.canvas.remove(this.semiRing);
-
-      const centerX = this.currentCanvasWidth / 2;
-      const centerY = (this.originalSemiRingWidth / 2) * scale; // Центр кольца на уровне радиуса от верха
-      const outerRadius = (this.originalSemiRingWidth / 2) * scale;
-      const innerRadius = outerRadius - this.originalSemiRingThickness * scale;
-
-      // Создаем путь для полукольца (развернутого на 180 градусов)
-      const path =
-        `M ${centerX - outerRadius},${centerY} ` +
-        `A ${outerRadius},${outerRadius} 0 0 0 ${
-          centerX + outerRadius
-        },${centerY} ` +
-        `L ${centerX + innerRadius},${centerY} ` +
-        `A ${innerRadius},${innerRadius} 0 0 1 ${
-          centerX - innerRadius
-        },${centerY} ` +
-        `Z`;
-
-      this.semiRing = new fabric.Path(path, {
-        fill: "#000000", // Черный цвет
-        selectable: false,
-        evented: false,
-        originX: "center",
-        originY: "center",
-        left: centerX,
-        top: 0, // Устанавливаем top равным нулю
-        name: "semiRing",
-      });
-
-      this.canvas.add(this.semiRing);
-      this.canvas.sendToBack(this.semiRing);
+      this.createSemiRing();
     }
 
-    // Обновляем пороговые значения
     this.updateThresholds();
   }
 
+  // Обновленный метод для обновления позиций элементов на шнурке
+  updateCordElements() {
+    const elementsCount = this.elementsOnCord.length;
+    if (elementsCount === 0) return;
+
+    // Определяем видимую область шнурка (исключая полукольцо сверху)
+    const semiRingHeight =
+      this.originalSemiRingWidth *
+      (this.currentCanvasHeight / this.originalCanvasHeight);
+    const visibleCordHeight = this.currentCanvasHeight - semiRingHeight;
+    const cordStartY = semiRingHeight;
+
+    // 1. Вычисляем общую высоту всех элементов на шнурке
+    let totalHeight = 0;
+    // Сортируем элементы для сохранения порядка
+    this.elementsOnCord.sort((a, b) => a.positionIndex - b.positionIndex);
+    this.elementsOnCord.forEach((element) => {
+      totalHeight += element.height * element.scaleY;
+    });
+
+    // 2. Находим центральную точку для распределения (идеальный центр минус 50px)
+    const verticalOffset =
+      50 * (this.currentCanvasHeight / this.originalCanvasHeight);
+    const centerY = cordStartY + visibleCordHeight / 2 - verticalOffset;
+
+    // 3. Вычисляем начальную Y-координату для первого элемента
+    let currentY = centerY - totalHeight / 2;
+
+    // 4. Распределяем элементы плотно друг к другу
+    this.elementsOnCord.forEach((element, index) => {
+      const elementHeight = element.height * element.scaleY;
+      // Позиционируем центр элемента
+      const targetY = currentY + elementHeight / 2;
+
+      element.set({
+        left: this.currentCanvasWidth / 2,
+        top: targetY,
+        positionIndex: index, // Обновляем индекс после сортировки
+      });
+      element.setCoords();
+
+      // Сдвигаем текущую Y-координату на высоту текущего элемента
+      currentY += elementHeight;
+    });
+  }
+
   setupResizeObserver() {
-    // Создаем наблюдатель за изменением размера контейнера
     const resizeObserver = new ResizeObserver(() => {
       this.applyResponsive();
     });
-
-    // Начинаем наблюдение за контейнером канваса
     resizeObserver.observe(this.container);
-
-    // Сохраняем наблюдатель для возможной остановки
     this.resizeObserver = resizeObserver;
   }
 
-  // Создаем панель управления в DOM
   createControlPanel() {
-    // Создаем стили для панели управления
     const style = document.createElement("style");
     style.textContent = `
-            .control-panel {
-              border: 1px solid #ddd;
-              padding: 15px 20px;
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              flex-wrap: wrap;
-              width: 100%;
-              box-sizing: border-box;
-            }
-
-            .control-panel-left {
-              display: flex;
-              align-items: center;
-              gap: 15px;
-            }
-
-            .control-panel-right {
-              display: flex;
-              align-items: center;
-              gap: 15px;
-            }
-
-            .reset-button {
-              background: transparent;
-              border: 2px solid black;
-              padding: 8px 15px;
-              cursor: pointer;
-              transition: background 0.3s;
-              font-size: 16px;
-              font-family: 'Arial';
-              letter-spacing: 0em;
-            }
-
-            .reset-button:hover {
-              background: black;
-              color: white;
-            }
-
-            .cord-label {              
-              font-size: 16px;
-              font-family: 'Arial';
-              letter-spacing: 0em;
-            }
-
-            .cord-colors {
-              display: flex;
-              gap: 10px;
-            }
-
-            .cord-color {
-              width: 30px;
-              height: 30px;
-              border-radius: 50%;
-              cursor: pointer;
-              border: 2px solid transparent;
-              transition: border 0.3s;
-            }
-
-            .cord-color:hover {
-              border-color: #333;
-            }
-
-            .cord-color.active {
-              border-color: #333;
-              box-shadow: 0 0 5px rgba(0,0,0,0.3);
-            }
+            .control-panel { padding: 15px 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; width: 100%; box-sizing: border-box; }
+            .control-panel-left { display: flex; align-items: center; gap: 15px; }
+            .control-panel-right { display: flex; align-items: center; gap: 15px; }
+            .reset-button, .random-button { background: transparent; border: 2px solid black; padding: 8px 15px; cursor: pointer; transition: background 0.3s; font-size: 16px; font-family: 'Arial'; letter-spacing: 0em; }
+            .reset-button:hover, .random-button:hover { background: black; color: white; }
+            .cord-label { font-size: 16px; font-family: 'Arial'; letter-spacing: 0em; }
+            .cord-colors { display: flex; gap: 10px; }
+            .cord-color { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: border 0.3s; }
+            .cord-color:hover { border-color: #333; }
+            .cord-color.active { border-color: #333; box-shadow: 0 0 5px rgba(0,0,0,0.3); }
           `;
     document.head.appendChild(style);
 
-    // Создаем панель управления
     this.controlPanel = document.createElement("div");
     this.controlPanel.className = "control-panel";
 
-    // Левая часть панели
     const leftPanel = document.createElement("div");
     leftPanel.className = "control-panel-left";
-
-    // Кнопка "Сбросить"
     const resetButton = document.createElement("button");
     resetButton.className = "reset-button";
     resetButton.textContent = "Сбросить";
     resetButton.id = "reset-button";
-
-    // Добавляем кнопки в левую часть
+    const randomButton = document.createElement("button");
+    randomButton.className = "random-button";
+    randomButton.textContent = "Случайный брелок";
+    randomButton.id = "random-button";
     leftPanel.appendChild(resetButton);
+    leftPanel.appendChild(randomButton);
 
-    // Правая часть панели
     const rightPanel = document.createElement("div");
     rightPanel.className = "control-panel-right";
-
-    // Надпись "Шнурки:"
     const cordLabel = document.createElement("span");
     cordLabel.className = "cord-label";
     cordLabel.textContent = "Шнурки:";
-
-    // Контейнер для кружков выбора цвета
     const cordColors = document.createElement("div");
     cordColors.className = "cord-colors";
-
-    // Зеленый кружок
-    const greenCircle = document.createElement("div");
-    greenCircle.className = "cord-color active";
-    greenCircle.style.backgroundColor = "#4CAF50";
-    greenCircle.dataset.color = "green";
-
-    // Серый кружок
-    const grayCircle = document.createElement("div");
-    grayCircle.className = "cord-color";
-    grayCircle.style.backgroundColor = "#9E9E9E";
-    grayCircle.dataset.color = "gray";
-
-    // Синий кружок
-    const blueCircle = document.createElement("div");
-    blueCircle.className = "cord-color";
-    blueCircle.style.backgroundColor = "#2196F3";
-    blueCircle.dataset.color = "blue";
-
-    // Добавляем кружки в контейнер
-    cordColors.appendChild(greenCircle);
-    cordColors.appendChild(grayCircle);
-    cordColors.appendChild(blueCircle);
-
-    // Добавляем надпись и кружки в правую часть
+    const colors = ["green", "gray", "blue"];
+    colors.forEach((color) => {
+      const circle = document.createElement("div");
+      circle.className = `cord-color ${color === "green" ? "active" : ""}`;
+      circle.style.backgroundColor =
+        color === "green"
+          ? "#4CAF50"
+          : color === "gray"
+          ? "#9E9E9E"
+          : "#2196F3";
+      circle.dataset.color = color;
+      cordColors.appendChild(circle);
+    });
     rightPanel.appendChild(cordLabel);
     rightPanel.appendChild(cordColors);
 
-    // Добавляем левую и правую части в панель
     this.controlPanel.appendChild(leftPanel);
     this.controlPanel.appendChild(rightPanel);
-
-    // Добавляем панель в контейнер канваса (после канваса)
     this.container.appendChild(this.controlPanel);
-  }
-
-  createCordPositions() {
-    // Используем относительное значение отступа вместо фиксированного 150
-    const positionHeight =
-      (this.currentCanvasHeight * (1 - this.marginRatio)) /
-      (this.options.maxElements + 1);
-
-    for (let i = 1; i <= this.options.maxElements; i++) {
-      this.cordPositions.push({
-        y: 5 + positionHeight * i,
-        occupied: false,
-        element: null,
-      });
-    }
   }
 
   initCord() {
@@ -534,35 +368,28 @@ class KeychainEditor {
       this.currentCord = cord;
       this.canvas.add(cord);
       this.canvas.sendToBack(cord);
-
-      // Убедимся, что полукольцо остается на заднем плане
       if (this.semiRing) {
         this.canvas.sendToBack(this.semiRing);
       }
-
       this.canvas.renderAll();
-
-      // После добавления шнурка создаем элементы
       this.createElements();
     });
   }
 
   setupEventListeners() {
-    // Обработчик клика на кнопку сброса
     document.getElementById("reset-button").addEventListener("click", () => {
       this.reset();
     });
-
-    // Обработчики клика на кружки выбора цвета шнурка
+    document.getElementById("random-button").addEventListener("click", () => {
+      this.generateRandomKeychain();
+    });
     document.querySelectorAll(".cord-color").forEach((circle) => {
       circle.addEventListener("click", () => {
         const color = circle.dataset.color;
         this.changeCord(color);
-
-        // Обновляем активный кружок
-        document.querySelectorAll(".cord-color").forEach((c) => {
-          c.classList.remove("active");
-        });
+        document
+          .querySelectorAll(".cord-color")
+          .forEach((c) => c.classList.remove("active"));
         circle.classList.add("active");
       });
     });
@@ -573,19 +400,13 @@ class KeychainEditor {
       fabric.Image.fromURL(
         this.options.cordUrls[color],
         (img) => {
-          // Сохраняем соотношение сторон изображения шнурка
           this.cordImageAspectRatio = img.height / img.width;
-
-          // Рассчитываем размеры шнурка с учетом текущего размера канваса
           const scaleX = this.currentCanvasWidth / this.originalCanvasWidth;
-          const scaleY = this.currentCanvasHeight / this.originalCanvasHeight;
           const cordWidth = this.options.cordWidth * scaleX;
           const cordHeight = cordWidth * this.cordImageAspectRatio;
-
-          // Устанавливаем размеры изображения
           img.set({
             left: this.currentCanvasWidth / 2 - cordWidth / 2,
-            top: 5,
+            top: 0,
             scaleX: cordWidth / img.width,
             scaleY: cordHeight / img.height,
             selectable: false,
@@ -610,16 +431,16 @@ class KeychainEditor {
       fabric.Image.fromURL(
         imageUrl,
         (img) => {
-          // Рассчитываем масштаб с учетом текущего размера канваса
-          const scaleX = this.currentCanvasWidth / this.originalCanvasWidth;
-          const scaleY = this.currentCanvasHeight / this.originalCanvasHeight;
-          const targetSize = 100 * Math.min(scaleX, scaleY);
-
+          const targetWidth =
+            this.options.elementWidth *
+            (this.currentCanvasWidth / this.originalCanvasWidth);
+          const elementScale = targetWidth / img.width;
+          const scaledHeight = img.height * elementScale;
           img.set({
-            left: position.x + targetSize / 2,
-            top: position.y + targetSize / 2,
-            scaleX: targetSize / img.width,
-            scaleY: targetSize / img.height,
+            left: position.x,
+            top: position.y,
+            scaleX: elementScale,
+            scaleY: elementScale,
             originX: "center",
             originY: "center",
             hasControls: false,
@@ -630,8 +451,6 @@ class KeychainEditor {
             originalSide: position.side,
             onCord: false,
             positionIndex: -1,
-            originalLeft: position.x + targetSize / 2,
-            originalTop: position.y + targetSize / 2,
             isDetaching: false,
             crossOrigin: "anonymous",
           });
@@ -642,335 +461,24 @@ class KeychainEditor {
     });
   }
 
-  createElements() {
-    const elementSize = 100;
-    const usedPositions = [];
-
-    // Создаем элементы для каждого URL в массиве
-    const elementPromises = this.options.elementsData.map((imageUrl, index) => {
-      // Определяем сторону (слева или справа от шнура)
-      const side = index % 2 === 0 ? "left" : "right";
-
-      // Генерируем случайную позицию
-      let position;
-      let attempts = 0;
-      const maxAttempts = 20;
-
-      do {
-        position = this.getRandomPosition(side, elementSize);
-        attempts++;
-      } while (
-        attempts < maxAttempts &&
-        this.isPositionOverlapping(position, usedPositions, elementSize)
-      );
-
-      usedPositions.push(position);
-      position.side = side;
-
-      return this.createElement(imageUrl, position);
-    });
-
-    // Добавляем все элементы на canvas после их загрузки
-    Promise.all(elementPromises).then((elements) => {
-      elements.forEach((element) => {
-        // Преобразуем текущие координаты в исходные для правильного масштабирования
-        const originalPos = this.getOriginalPosition(element.left, element.top);
-
-        // Обновляем исходные координаты элемента
-        element.originalLeft = originalPos.x;
-        element.originalTop = originalPos.y;
-
-        // Добавляем обработчики событий для перетаскивания
-        element.on("moving", () => {
-          if (element.onCord && !element.isDetaching) {
-            const cordCenterX = this.currentCanvasWidth / 2;
-
-            // Проверка горизонтального смещения для открепления
-            const horizontalDistance = Math.abs(element.left - cordCenterX);
-            if (horizontalDistance > this.currentDetachThreshold) {
-              // Начинаем процесс открепления
-              element.isDetaching = true;
-              element.onCord = false;
-              this.cordPositions[element.positionIndex].occupied = false;
-              this.cordPositions[element.positionIndex].element = null;
-              element.positionIndex = -1;
-              return;
-            }
-
-            // Ограничиваем движение по горизонтали
-            element.left = cordCenterX;
-
-            // Проверка вертикального перемещения для обмена местами
-            // Используем относительное значение отступа
-            const positionHeight =
-              (this.currentCanvasHeight * (1 - this.marginRatio)) /
-              (this.options.maxElements + 1);
-            const swapThreshold = positionHeight / 2;
-
-            // Проверка перемещения вверх
-            if (element.positionIndex > 0) {
-              const upperPosition =
-                this.cordPositions[element.positionIndex - 1];
-              if (element.top < upperPosition.y + swapThreshold) {
-                this.swapElementsOnCord(
-                  element.positionIndex,
-                  element.positionIndex - 1
-                );
-              }
-            }
-
-            // Проверка перемещения вниз
-            if (element.positionIndex < this.cordPositions.length - 1) {
-              const lowerPosition =
-                this.cordPositions[element.positionIndex + 1];
-              if (element.top > lowerPosition.y - swapThreshold) {
-                this.swapElementsOnCord(
-                  element.positionIndex,
-                  element.positionIndex + 1
-                );
-              }
-            }
-          }
-        });
-
-        element.on("mouseup", () => {
-          if (element.isDetaching) {
-            // Элемент был откреплен, возвращаем в исходное положение
-            element.isDetaching = false;
-            const scaledPos = this.getScaledPosition(
-              element.originalLeft,
-              element.originalTop
-            );
-            this.animateElement(
-              element,
-              element.left,
-              element.top,
-              scaledPos.x,
-              scaledPos.y
-            );
-          } else if (element.onCord) {
-            // Элемент на шнуре, проверяем, нужно ли вернуть его в позицию
-            const positionY = this.cordPositions[element.positionIndex].y;
-            const verticalDistance = Math.abs(element.top - positionY);
-
-            // Если элемент сдвинут более чем на пороговое значение, возвращаем его в позицию
-            if (verticalDistance > this.currentSwapThreshold) {
-              this.animateElement(
-                element,
-                element.left,
-                element.top,
-                this.currentCanvasWidth / 2,
-                positionY,
-                300
-              );
-            }
-          } else if (!element.onCord) {
-            // Проверка, находится ли элемент над шнуром
-            const cordCenterX = this.currentCanvasWidth / 2;
-            const distance = Math.abs(element.left - cordCenterX);
-
-            if (distance < this.currentAttachThreshold) {
-              // Поиск ближайшей свободной позиции
-              let closestPosition = -1;
-              let minDistance = Infinity;
-
-              this.cordPositions.forEach((pos, index) => {
-                if (!pos.occupied) {
-                  const dist = Math.abs(element.top - pos.y);
-                  if (dist < minDistance) {
-                    minDistance = dist;
-                    closestPosition = index;
-                  }
-                }
-              });
-
-              if (
-                closestPosition !== -1 &&
-                minDistance < this.currentAttachThreshold
-              ) {
-                // Размещение элемента на шнуре
-                element.onCord = true;
-                element.positionIndex = closestPosition;
-                this.cordPositions[closestPosition].occupied = true;
-                this.cordPositions[closestPosition].element = element;
-
-                // Позиционирование элемента
-                element.left = cordCenterX;
-                element.top = this.cordPositions[closestPosition].y;
-                element.setCoords();
-              } else {
-                // Элемент не прикреплен к шнуру, возвращаем на исходную позицию с анимацией
-                const scaledPos = this.getScaledPosition(
-                  element.originalLeft,
-                  element.originalTop
-                );
-                this.animateElement(
-                  element,
-                  element.left,
-                  element.top,
-                  scaledPos.x,
-                  scaledPos.y
-                );
-              }
-            } else {
-              // Элемент не прикреплен к шнуру, возвращаем на исходную позицию с анимацией
-              const scaledPos = this.getScaledPosition(
-                element.originalLeft,
-                element.originalTop
-              );
-              this.animateElement(
-                element,
-                element.left,
-                element.top,
-                scaledPos.x,
-                scaledPos.y
-              );
-            }
-          }
-        });
-
-        this.canvas.add(element);
-        this.templateElements.push(element);
-      });
-      this.canvas.renderAll();
-    });
-  }
-
-  changeCord(color) {
-    // Обновляем текущий цвет шнурка
-    this.currentCordColor = color;
-
-    if (this.currentCord) {
-      this.canvas.remove(this.currentCord);
-    }
-
-    this.createCord(color).then((cord) => {
-      this.currentCord = cord;
-      this.canvas.add(cord);
-      this.canvas.sendToBack(cord);
-
-      // Убедимся, что полукольцо остается на заднем плане
-      if (this.semiRing) {
-        this.canvas.sendToBack(this.semiRing);
-      }
-
-      this.canvas.renderAll();
-      this.applyResponsive();
-    });
-  }
-
-  reset() {
-    // Сброс всех элементов
-    const leftPositions = [];
-    const rightPositions = [];
-
-    this.templateElements.forEach((element) => {
-      // Снимаем элемент со шнура, если он там был
-      if (element.onCord) {
-        element.onCord = false;
-        this.cordPositions[element.positionIndex].occupied = false;
-        this.cordPositions[element.positionIndex].element = null;
-        element.positionIndex = -1;
-      }
-
-      // Возвращаем элемент на свою сторону
-      element.side = element.originalSide;
-
-      // Генерируем новую случайную позицию без пересечений
-      let newPosition;
-      let attempts = 0;
-      const maxAttempts = 20;
-      const positionsArray =
-        element.side === "left" ? leftPositions : rightPositions;
-
-      do {
-        newPosition = this.getRandomPosition(element.side, 100);
-        attempts++;
-      } while (
-        attempts < maxAttempts &&
-        this.isPositionOverlapping(newPosition, positionsArray, 100)
-      );
-
-      // Добавляем позицию в соответствующий массив
-      positionsArray.push(newPosition);
-
-      // Преобразуем текущие координаты в исходные для правильного масштабирования
-      const originalPos = this.getOriginalPosition(
-        newPosition.x + 50,
-        newPosition.y + 50
-      );
-
-      // Обновляем исходные координаты элемента
-      element.originalLeft = originalPos.x;
-      element.originalTop = originalPos.y;
-
-      // Анимированно перемещаем элемент на новую позицию
-      this.animateElement(
-        element,
-        element.left,
-        element.top,
-        newPosition.x + 50,
-        newPosition.y + 50
-      );
-    });
-
-    // Сброс позиций
-    this.cordPositions.forEach((pos) => {
-      pos.occupied = false;
-      pos.element = null;
-    });
-    this.canvas.renderAll();
-  }
-
-  getResultJson() {
-    // Получаем URL текущего шнурка
-    let cordImageUrl = "";
-    if (
-      this.currentCord &&
-      this.currentCord._element &&
-      this.currentCord._element.src
-    ) {
-      cordImageUrl = this.currentCord._element.src;
-    } else {
-      // По умолчанию зеленый шнур, если не удалось определить
-      cordImageUrl = this.options.cordUrls.green;
-    }
-
-    // Получаем список элементов на шнуре
-    const elementsOnCord = [];
-    this.cordPositions.forEach((pos) => {
-      if (pos.occupied && pos.element && pos.element.imageUrl) {
-        elementsOnCord.push({
-          imageUrl: pos.element.imageUrl,
-        });
-      }
-    });
-
-    // Формируем объект результата
-    const result = {
-      cord: cordImageUrl,
-      elements: elementsOnCord,
-    };
-
-    // Возвращаем результат в формате JSON
-    return JSON.stringify(result, null, 2);
-  }
-
-  getRandomPosition(side, elementSize = 100) {
+  getRandomPosition(side, elementSize) {
     const cordCenterX = this.currentCanvasWidth / 2;
     const margin = 30;
+    const cordVisualWidth =
+      this.options.cordWidth *
+      (this.currentCanvasWidth / this.originalCanvasWidth);
+    const padding = 20;
 
     let minX, maxX;
-
     if (side === "left") {
       minX = margin;
-      maxX = cordCenterX - this.options.cordWidth / 2 - margin - elementSize;
+      maxX = cordCenterX - cordVisualWidth / 2 - padding - elementSize;
     } else {
-      minX = cordCenterX + this.options.cordWidth / 2 + margin;
+      minX = cordCenterX + cordVisualWidth / 2 + padding;
       maxX = this.currentCanvasWidth - margin - elementSize;
     }
 
-    const minY = margin + 50; // Уменьшаем отступ сверху, так как высота канваса уменьшилась
+    const minY = margin + 50;
     const maxY = this.currentCanvasHeight - margin - elementSize;
 
     const x = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
@@ -995,7 +503,6 @@ class KeychainEditor {
       width: elementSize,
       height: elementSize,
     };
-
     for (const pos of existingPositions) {
       const existingRect = {
         x: pos.x,
@@ -1003,12 +510,367 @@ class KeychainEditor {
         width: elementSize,
         height: elementSize,
       };
-
       if (this.doRectanglesOverlap(newRect, existingRect)) {
         return true;
       }
     }
     return false;
+  }
+
+  createElements() {
+    const elementSize = this.options.elementWidth;
+    const usedPositions = [];
+
+    const elementPromises = this.options.elementsData.map((imageUrl, index) => {
+      const side = index % 2 === 0 ? "left" : "right";
+      let position;
+      let attempts = 0;
+      const maxAttempts = 20;
+      do {
+        position = this.getRandomPosition(side, elementSize);
+        attempts++;
+      } while (
+        attempts < maxAttempts &&
+        this.isPositionOverlapping(position, usedPositions, elementSize)
+      );
+      usedPositions.push(position);
+      position.side = side;
+      return this.createElement(imageUrl, position);
+    });
+
+    Promise.all(elementPromises).then((elements) => {
+      elements.forEach((element) => {
+        const originalPos = this.getOriginalPosition(element.left, element.top);
+        element.originalLeft = originalPos.x;
+        element.originalTop = originalPos.y;
+
+        element.on("moving", () => {
+          // --- ИСПРАВЛЕННОЕ Ограничение движения в пределах холста ---
+          const elementWidth = element.width * element.scaleX;
+          const elementHeight = element.height * element.scaleY;
+
+          // Левая граница
+          if (element.left < elementWidth / 2) {
+            element.left = elementWidth / 2;
+          }
+          // Верхняя граница
+          if (element.top < elementHeight / 2) {
+            element.top = elementHeight / 2;
+          }
+          // Правая граница
+          if (element.left > this.currentCanvasWidth - elementWidth / 2) {
+            element.left = this.currentCanvasWidth - elementWidth / 2;
+          }
+          // Нижняя граница
+          if (element.top > this.currentCanvasHeight - elementHeight / 2) {
+            element.top = this.currentCanvasHeight - elementHeight / 2;
+          }
+          // --- Конец ограничения ---
+
+          if (element.onCord && !element.isDetaching) {
+            const cordCenterX = this.currentCanvasWidth / 2;
+            if (
+              Math.abs(element.left - cordCenterX) > this.currentDetachThreshold
+            ) {
+              element.isDetaching = true;
+              this.detachElementFromCord(element);
+              return;
+            }
+            element.left = cordCenterX;
+
+            // Проверка на обмен местами с другими элементами
+            this.checkForSwap(element);
+          }
+        });
+
+        element.on("mouseup", () => {
+          const updateOriginalPosition = () => {
+            const originalPos = this.getOriginalPosition(
+              element.left,
+              element.top
+            );
+            element.originalLeft = originalPos.x;
+            element.originalTop = originalPos.y;
+          };
+
+          if (element.isDetaching) {
+            element.isDetaching = false;
+            updateOriginalPosition();
+          } else if (element.onCord) {
+            // Если элемент на шнурке, просто обновляем его позицию
+            this.updateCordElements();
+          } else {
+            const cordCenterX = this.currentCanvasWidth / 2;
+            const distance = Math.abs(element.left - cordCenterX);
+            if (distance < this.currentAttachThreshold) {
+              // Проверяем, есть ли место на шнурке
+              if (this.elementsOnCord.length < this.options.maxElements) {
+                this.attachElementToCord(element);
+              } else {
+                this.handleNoDropZone(element);
+                updateOriginalPosition();
+              }
+            } else {
+              this.handleNoDropZone(element);
+              updateOriginalPosition();
+            }
+          }
+        });
+
+        this.canvas.add(element);
+        this.templateElements.push(element);
+      });
+      this.canvas.renderAll();
+    });
+  }
+
+  // Новый метод для прикрепления элемента к шнурку
+  attachElementToCord(element) {
+    element.onCord = true;
+    element.positionIndex = this.elementsOnCord.length;
+    this.elementsOnCord.push(element);
+    element.left = this.currentCanvasWidth / 2;
+    this.updateCordElements();
+    element.setCoords();
+  }
+
+  // Новый метод для открепления элемента от шнурка
+  detachElementFromCord(element) {
+    element.onCord = false;
+    // Удаляем элемент из массива элементов на шнурке
+    const index = this.elementsOnCord.indexOf(element);
+    if (index > -1) {
+      this.elementsOnCord.splice(index, 1);
+    }
+    element.positionIndex = -1;
+    // Обновляем позиции оставшихся элементов
+    this.updateCordElements();
+  }
+
+  // Новый метод для проверки обмена элементов местами
+  checkForSwap(movingElement) {
+    if (!movingElement.onCord) return;
+
+    const movingIndex = this.elementsOnCord.indexOf(movingElement);
+    if (movingIndex === -1) return;
+
+    // Проверяем каждый элемент на шнурке на предмет обмена
+    this.elementsOnCord.forEach((element, index) => {
+      if (element === movingElement) return;
+
+      // Проверяем, достаточно ли близко элементы для обмена
+      const distance = Math.abs(movingElement.top - element.top);
+      if (distance < this.currentSwapThreshold) {
+        // Меняем элементы местами в массиве
+        this.elementsOnCord[movingIndex] = element;
+        this.elementsOnCord[index] = movingElement;
+
+        // Обновляем positionIndex
+        const tempIndex = movingElement.positionIndex;
+        movingElement.positionIndex = element.positionIndex;
+        element.positionIndex = tempIndex;
+
+        // Обновляем позиции
+        this.updateCordElements();
+      }
+    });
+  }
+
+  handleNoDropZone(element) {
+    const cordBounds = this.currentCord.getBoundingRect();
+    const elementBounds = element.getBoundingRect();
+    const padding = 10;
+    if (
+      elementBounds.left < cordBounds.left + cordBounds.width &&
+      elementBounds.left + elementBounds.width > cordBounds.left
+    ) {
+      if (element.left < this.currentCanvasWidth / 2) {
+        element.left = cordBounds.left - elementBounds.width / 2 - padding;
+      } else {
+        element.left =
+          cordBounds.left +
+          cordBounds.width +
+          elementBounds.width / 2 +
+          padding;
+      }
+      element.setCoords();
+    }
+  }
+
+  changeCord(color) {
+    this.currentCordColor = color;
+    if (this.currentCord) {
+      this.canvas.remove(this.currentCord);
+    }
+    this.createCord(color).then((cord) => {
+      this.currentCord = cord;
+      this.canvas.add(cord);
+      this.canvas.sendToBack(cord);
+      if (this.semiRing) {
+        this.canvas.sendToBack(this.semiRing);
+      }
+      this.canvas.renderAll();
+      this.applyResponsive();
+    });
+  }
+
+  reset() {
+    const leftPositions = [];
+    const rightPositions = [];
+    const elementSize = this.options.elementWidth;
+
+    // Очищаем массив элементов на шнурке
+    this.elementsOnCord = [];
+
+    this.templateElements.forEach((element) => {
+      if (element.onCord) {
+        element.onCord = false;
+        element.positionIndex = -1;
+      }
+      element.side = element.originalSide;
+
+      let newPosition;
+      let attempts = 0;
+      const maxAttempts = 20;
+      const positionsArray =
+        element.side === "left" ? leftPositions : rightPositions;
+      do {
+        newPosition = this.getRandomPosition(element.side, elementSize);
+        attempts++;
+      } while (
+        attempts < maxAttempts &&
+        this.isPositionOverlapping(newPosition, positionsArray, elementSize)
+      );
+      positionsArray.push(newPosition);
+
+      const originalPos = this.getOriginalPosition(
+        newPosition.x,
+        newPosition.y
+      );
+      element.originalLeft = originalPos.x;
+      element.originalTop = originalPos.y;
+
+      this.animateElement(
+        element,
+        element.left,
+        element.top,
+        newPosition.x,
+        newPosition.y
+      );
+    });
+
+    this.canvas.renderAll();
+  }
+
+  // Обновленный метод для генерации случайного брелка
+  generateRandomKeychain() {
+    const elementsToDetach = [...this.elementsOnCord];
+    if (elementsToDetach.length > 0) {
+      // Логически открепляем элементы, чтобы они не мешали анимации
+      this.elementsOnCord = [];
+      elementsToDetach.forEach((element) => {
+        element.onCord = false;
+        element.positionIndex = -1;
+      });
+
+      // Анимируем старые элементы away
+      const animations = elementsToDetach.map((element) => {
+        const elementSize = this.options.elementWidth;
+        const newPosition = this.getRandomPosition(
+          element.originalSide,
+          elementSize
+        );
+        const originalPos = this.getOriginalPosition(
+          newPosition.x,
+          newPosition.y
+        );
+        element.originalLeft = originalPos.x;
+        element.originalTop = originalPos.y;
+        return this.animateElementPromise(
+          element,
+          element.left,
+          element.top,
+          newPosition.x,
+          newPosition.y,
+          400
+        );
+      });
+
+      // После того как они разлетелись, добавляем новые
+      Promise.all(animations).then(() => {
+        this.addRandomElementsToCord();
+      });
+    } else {
+      // Если шнурок пуст, просто добавляем новые элементы
+      this.addRandomElementsToCord();
+    }
+  }
+
+  // Вспомогательный метод для добавления случайных элементов с анимацией
+  addRandomElementsToCord() {
+    const availableElements = this.templateElements.filter((el) => !el.onCord);
+    if (availableElements.length < this.options.maxElements) {
+      console.error("Недостаточно элементов для создания случайного брелка.");
+      return;
+    }
+
+    const shuffled = availableElements.sort(() => 0.5 - Math.random());
+    const selectedElements = shuffled.slice(0, this.options.maxElements);
+
+    // 1. Добавляем элементы на шнурок
+    selectedElements.forEach((element) => {
+      element.onCord = true;
+      element.positionIndex = this.elementsOnCord.length;
+      this.elementsOnCord.push(element);
+    });
+
+    // 2. Вычисляем их финальные позиции
+    this.updateCordElements();
+
+    // 3. Запускаем анимацию падения сверху
+    selectedElements.forEach((element) => {
+      const finalLeft = element.left;
+      const finalTop = element.top;
+      const elementHeight = element.height * element.scaleY;
+
+      // Устанавливаем начальную позицию для анимации (над холстом)
+      element.set({
+        left: finalLeft,
+        top: -elementHeight, // Начинаем анимацию с высоты элемента над холстом
+      });
+      element.setCoords();
+
+      // Запускаем анимацию к финальной позиции
+      this.animateElement(
+        element,
+        finalLeft, // startLeft
+        -elementHeight, // startTop
+        finalLeft, // endLeft
+        finalTop, // endTop
+        700 // duration
+      );
+    });
+  }
+
+  getResultJson() {
+    let cordImageUrl = "";
+    if (
+      this.currentCord &&
+      this.currentCord._element &&
+      this.currentCord._element.src
+    ) {
+      cordImageUrl = this.currentCord._element.src;
+    } else {
+      cordImageUrl = this.options.cordUrls.green;
+    }
+    const elementsOnCord = [];
+    this.elementsOnCord.forEach((element) => {
+      if (element && element.imageUrl) {
+        elementsOnCord.push({ imageUrl: element.imageUrl });
+      }
+    });
+    const result = { cord: cordImageUrl, elements: elementsOnCord };
+    return JSON.stringify(result, null, 2);
   }
 
   animateElement(
@@ -1020,81 +882,49 @@ class KeychainEditor {
     duration = 500
   ) {
     const startTime = new Date().getTime();
-
     const animate = () => {
       const currentTime = new Date().getTime();
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
-
-      // Используем easeOutCubic для более плавной анимации
       const easeProgress = 1 - Math.pow(1 - progress, 3);
-
       element.left = startLeft + (endLeft - startLeft) * easeProgress;
       element.top = startTop + (endTop - startTop) * easeProgress;
-
       element.setCoords();
       this.canvas.renderAll();
-
       if (progress < 1) {
         requestAnimationFrame(animate);
       }
     };
-
     requestAnimationFrame(animate);
   }
 
-  swapElementsOnCord(index1, index2) {
-    if (
-      index1 < 0 ||
-      index1 >= this.cordPositions.length ||
-      index2 < 0 ||
-      index2 >= this.cordPositions.length
-    ) {
-      return;
-    }
-
-    const pos1 = this.cordPositions[index1];
-    const pos2 = this.cordPositions[index2];
-
-    // Обмен элементов
-    const tempElement = pos1.element;
-    pos1.element = pos2.element;
-    pos2.element = tempElement;
-
-    // Обмен занятости
-    const tempOccupied = pos1.occupied;
-    pos1.occupied = pos2.occupied;
-    pos2.occupied = tempOccupied;
-
-    // Обновление индексов у элементов
-    if (pos1.element) {
-      pos1.element.positionIndex = index1;
-    }
-    if (pos2.element) {
-      pos2.element.positionIndex = index2;
-    }
-
-    // Анимация перемещения элементов
-    if (pos1.element) {
-      this.animateElement(
-        pos1.element,
-        pos1.element.left,
-        pos1.element.top,
-        this.currentCanvasWidth / 2,
-        pos1.y,
-        300
-      );
-    }
-    if (pos2.element) {
-      this.animateElement(
-        pos2.element,
-        pos2.element.left,
-        pos2.element.top,
-        this.currentCanvasWidth / 2,
-        pos2.y,
-        300
-      );
-    }
+  // Вспомогательный метод для анимации, возвращающий Promise
+  animateElementPromise(
+    element,
+    startLeft,
+    startTop,
+    endLeft,
+    endTop,
+    duration = 500
+  ) {
+    return new Promise((resolve) => {
+      const startTime = new Date().getTime();
+      const animate = () => {
+        const currentTime = new Date().getTime();
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeProgress = 1 - Math.pow(1 - progress, 3);
+        element.left = startLeft + (endLeft - startLeft) * easeProgress;
+        element.top = startTop + (endTop - startTop) * easeProgress;
+        element.setCoords();
+        this.canvas.renderAll();
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          resolve();
+        }
+      };
+      requestAnimationFrame(animate);
+    });
   }
 }
-
