@@ -96,12 +96,28 @@ class KeychainEditor {
   }
 
   setupCanvas() {
-    this.canvas = new fabric.Canvas("keychain-canvas", {});
+    this.canvas = new fabric.Canvas("keychain-canvas", {
+      selection: false, // Отключаем выделение рамкой
+    });
     const canvasElement = document.getElementById("keychain-canvas");
     canvasElement.style.width = "100%";
     canvasElement.style.height = "auto";
     canvasElement.style.display = "block";
     canvasElement.style.border = "1px solid #ddd";
+
+    // Отключаем выделение нескольких объектов
+    this.canvas.on("selection:created", (e) => {
+      if (e.selected && e.selected.length > 1) {
+        this.canvas.discardActiveObject();
+        this.canvas.renderAll();
+      }
+    });
+    this.canvas.on("selection:updated", (e) => {
+      if (e.selected && e.selected.length > 1) {
+        this.canvas.discardActiveObject();
+        this.canvas.renderAll();
+      }
+    });
   }
 
   createSemiRing() {
@@ -597,7 +613,7 @@ class KeychainEditor {
             element.isDetaching = false;
             updateOriginalPosition();
           } else if (element.onCord) {
-            // Если элемент на шнурке, просто обновляем его позицию
+            // Если элемент на шнурке, обновляем его позицию
             this.updateCordElements();
           } else {
             const cordCenterX = this.currentCanvasWidth / 2;
@@ -647,33 +663,45 @@ class KeychainEditor {
     this.updateCordElements();
   }
 
-  // Новый метод для проверки обмена элементов местами
+  // ИСПРАВЛЕННЫЙ метод для проверки обмена элементов местами
   checkForSwap(movingElement) {
     if (!movingElement.onCord) return;
 
     const movingIndex = this.elementsOnCord.indexOf(movingElement);
     if (movingIndex === -1) return;
 
-    // Проверяем каждый элемент на шнурке на предмет обмена
-    this.elementsOnCord.forEach((element, index) => {
-      if (element === movingElement) return;
-
-      // Проверяем, достаточно ли близко элементы для обмена
-      const distance = Math.abs(movingElement.top - element.top);
-      if (distance < this.currentSwapThreshold) {
-        // Меняем элементы местами в массиве
-        this.elementsOnCord[movingIndex] = element;
-        this.elementsOnCord[index] = movingElement;
-
-        // Обновляем positionIndex
-        const tempIndex = movingElement.positionIndex;
-        movingElement.positionIndex = element.positionIndex;
-        element.positionIndex = tempIndex;
-
-        // Обновляем позиции
-        this.updateCordElements();
+    // Проверяем обмен с элементом ниже
+    if (movingIndex < this.elementsOnCord.length - 1) {
+      const elementBelow = this.elementsOnCord[movingIndex + 1];
+      // Обмен происходит, только если центр перетаскиваемого элемента
+      // явно прошел центр нижнего элемента
+      if (movingElement.top > elementBelow.top) {
+        this.swapElementsInArray(movingIndex, movingIndex + 1);
       }
-    });
+    }
+
+    // Проверяем обмен с элементом выше
+    if (movingIndex > 0) {
+      const elementAbove = this.elementsOnCord[movingIndex - 1];
+      if (movingElement.top < elementAbove.top) {
+        this.swapElementsInArray(movingIndex, movingIndex - 1);
+      }
+    }
+  }
+
+  // Вспомогательный метод для обмена элементов в массиве
+  swapElementsInArray(index1, index2) {
+    const element1 = this.elementsOnCord[index1];
+    const element2 = this.elementsOnCord[index2];
+
+    // Меняем элементы местами в массиве
+    this.elementsOnCord[index1] = element2;
+    this.elementsOnCord[index2] = element1;
+
+    // Обновляем их positionIndex
+    const tempIndex = element1.positionIndex;
+    element1.positionIndex = element2.positionIndex;
+    element2.positionIndex = tempIndex;
   }
 
   handleNoDropZone(element) {
