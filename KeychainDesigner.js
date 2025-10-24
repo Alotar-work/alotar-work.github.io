@@ -5,31 +5,91 @@ class KeychainEditor {
       height: 500, // Уменьшаем высоту канваса, так как панель теперь под ним
       backgroundColor: options.backgroundColor || "#f9f9f9",
       cordWidth: options.cordWidth || 100,
-      elementWidth: options.elementWidth || 50,
+      elementWidth: options.elementWidth || 70,
       cordColor: options.cordColor || "#555",
       maxElements: options.maxElements || 4,
       cordUrls: options.cordUrls || {
         green:
-          "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-0d9833be6231cc92420d3833ee256081.png",
-        gray: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-746c02d60c2d7f87e1ffde532e5cb2b6.png",
-        blue: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-c1d379781b124ce9b9469fa92985f6bd.png",
+          "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-a8d54636b48977d8e3c942463a137662.png",
+        gray: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-f0e15c5e7670d46991cf515363e0e6d8.png",
+        blue: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-89ce49869885b935e240762b42f50034.png",
       },
       elementsData: options.elementsData || [
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-5378eb609fb01b0349d93ce03d2591f6.png",
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-3ff04cbf7b4ce6971309bff88d765305.png",
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-510805ebcf41c5a0556f357b5d4eba9d.png",
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-c3590ee9e6cedf63e373b4b74ac8d326.png",
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-ba5882596978692d1c2d7c426b08023b.png",
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-1528282b3ee8054680b75e96deabaf06.png",
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-b76a2903684594c4f90ac5da76270fa4.png",
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-2ad94fee17e1f8c05c5c73dc50c5a366.png",
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-50d8afa3c95316e40701ca5911d2882f.png",
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-13201cafdab9d6c5a59e6faf17f0e1a2.png",
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-c242ab6d96120f678b8ce568213dab42.png",
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-b26f400811363f2decf849fc49f3fcb6.png",
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-406215077c57ae0674696857565d4de4.png",
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-17e661b4879d6a3513f081848050d73f.png",
-        "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-0b3235414e47c14968ff4ebdb1b9e47c.png",
+        {
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-a257b6ed2a1e889cf7b2888816e2164e.png",
+          startX: 130,
+          startY: 100,
+        },
+        {
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-f4167800bbf18364ea389b94eff678e8.png",
+          startX: 200,
+          startY: 150,
+        },
+        {
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-13598614d25eaf9f8f552c1f8a90915f.png",
+          startX: 80,
+          startY: 180,
+        },
+        {
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-8979b15d0009f1d7efdfabe4d7a0f117.png",
+          startX: 120,
+          startY: 250,
+        },
+        {
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-a741507ea62d41ee92bc57542c25f62f.png",
+          startX: 200,
+          startY: 250,
+        },
+        {
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-e29ff47f42cd1974ada3e71a9ad098f2.png",
+          startX: 70,
+          startY: 310,
+        },
+        {
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-95a1689816a9b200198ae5ee15b44acd.png",
+          startX: 180,
+          startY: 315,
+        },
+        {
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-01cfdab6e0b16424cd8ae2c0c89a596b.png",
+          startX: 150,
+          startY: 390,
+        },
+        {
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-a202d5490f2e9f72714aaa6fe0440f61.png",
+          startX: 430,
+          startY: 100,
+        },
+        {
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-c5993e649898375b0af26a26195d3b82.png",
+          startX: 510,
+          startY: 150,
+        },
+        {
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-6875de21e6e375e170c093ab87049ede.png",
+          startX: 400,
+          startY: 200,
+        },
+        {
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-ab6f9d040c22053f587d382aaf6b833c.png",
+          startX: 510,
+          startY: 250,
+        },
+        {
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-97e9860e583911096942c661d76bbc86.png",
+          startX: 400,
+          startY: 300,
+        },
+        {
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-fe44024ceed694cb5a913f0692ec5a85.png",
+          startX: 510,
+          startY: 330,
+        },
+        {
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-6f1472f659d16c9078497b32c976781b.png",
+          startX: 450,
+          startY: 400,
+        },
       ],
     };
 
@@ -55,11 +115,6 @@ class KeychainEditor {
     this.currentSwapThreshold = this.originalSwapThreshold;
 
     this.isApplyResponsiveAwait = false;
-
-    // Параметры полукольца
-    this.originalSemiRingWidth = 100; // Ширина кольца (диаметр)
-    this.originalSemiRingThickness = 7; // Толщина кольца
-    this.semiRing = null;
   }
 
   init(targetElementSelector) {
@@ -78,7 +133,6 @@ class KeychainEditor {
     this.createCanvas();
     this.setupCanvas();
     this.createControlPanel();
-    this.createSemiRing();
     this.initCord();
     this.setupEventListeners();
     this.setupResizeObserver();
@@ -118,45 +172,6 @@ class KeychainEditor {
         this.canvas.renderAll();
       }
     });
-  }
-
-  createSemiRing() {
-    const centerX = this.currentCanvasWidth / 2;
-    const centerY =
-      (this.originalSemiRingWidth / 2) *
-      (this.currentCanvasHeight / this.originalCanvasHeight);
-    const outerRadius =
-      (this.originalSemiRingWidth / 2) *
-      (this.currentCanvasHeight / this.originalCanvasHeight);
-    const innerRadius =
-      outerRadius -
-      this.originalSemiRingThickness *
-        (this.currentCanvasHeight / this.originalCanvasHeight);
-
-    const path =
-      `M ${centerX - outerRadius},${centerY} ` +
-      `A ${outerRadius},${outerRadius} 0 0 0 ${
-        centerX + outerRadius
-      },${centerY} ` +
-      `L ${centerX + innerRadius},${centerY} ` +
-      `A ${innerRadius},${innerRadius} 0 0 1 ${
-        centerX - innerRadius
-      },${centerY} ` +
-      `Z`;
-
-    this.semiRing = new fabric.Path(path, {
-      fill: "#000000",
-      selectable: false,
-      evented: false,
-      originX: "center",
-      originY: "center",
-      left: centerX,
-      top: 0,
-      name: "semiRing",
-    });
-
-    this.canvas.add(this.semiRing);
-    this.canvas.sendToBack(this.semiRing);
   }
 
   getScaledPosition(originalX, originalY) {
@@ -257,11 +272,6 @@ class KeychainEditor {
       element.setCoords();
     });
 
-    if (this.semiRing) {
-      this.canvas.remove(this.semiRing);
-      this.createSemiRing();
-    }
-
     this.updateThresholds();
   }
 
@@ -270,12 +280,8 @@ class KeychainEditor {
     const elementsCount = this.elementsOnCord.length;
     if (elementsCount === 0) return;
 
-    // Определяем видимую область шнурка (исключая полукольцо сверху)
-    const semiRingHeight =
-      this.originalSemiRingWidth *
-      (this.currentCanvasHeight / this.originalCanvasHeight);
-    const visibleCordHeight = this.currentCanvasHeight - semiRingHeight;
-    const cordStartY = semiRingHeight;
+    // Определяем видимую область шнурка
+    const visibleCordHeight = this.currentCanvasHeight;
 
     // 1. Вычисляем общую высоту всех элементов на шнурке
     let totalHeight = 0;
@@ -288,7 +294,7 @@ class KeychainEditor {
     // 2. Находим центральную точку для распределения (идеальный центр минус 50px)
     const verticalOffset =
       50 * (this.currentCanvasHeight / this.originalCanvasHeight);
-    const centerY = cordStartY + visibleCordHeight / 2 - verticalOffset;
+    const centerY = visibleCordHeight / 2 - verticalOffset;
 
     // 3. Вычисляем начальную Y-координату для первого элемента
     let currentY = centerY - totalHeight / 2;
@@ -386,9 +392,6 @@ class KeychainEditor {
       this.currentCord = cord;
       this.canvas.add(cord);
       this.canvas.sendToBack(cord);
-      if (this.semiRing) {
-        this.canvas.sendToBack(this.semiRing);
-      }
       this.canvas.renderAll();
       this.createElements();
     });
@@ -444,19 +447,26 @@ class KeychainEditor {
     });
   }
 
-  createElement(imageUrl, position) {
+  createElement(elementData) {
     return new Promise((resolve) => {
       fabric.Image.fromURL(
-        imageUrl,
+        elementData.url,
         (img) => {
           const targetWidth =
             this.options.elementWidth *
             (this.currentCanvasWidth / this.originalCanvasWidth);
           const elementScale = targetWidth / img.width;
           const scaledHeight = img.height * elementScale;
+
+          // Используем предопределенные позиции
+          const scaledPos = this.getScaledPosition(
+            elementData.startX,
+            elementData.startY
+          );
+
           img.set({
-            left: position.x,
-            top: position.y,
+            left: scaledPos.x,
+            top: scaledPos.y,
             scaleX: elementScale,
             scaleY: elementScale,
             originX: "center",
@@ -464,13 +474,14 @@ class KeychainEditor {
             hasControls: false,
             hasBorders: false,
             isTemplate: true,
-            imageUrl: imageUrl,
-            side: position.side,
-            originalSide: position.side,
+            imageUrl: elementData.url,
             onCord: false,
             positionIndex: -1,
             isDetaching: false,
             crossOrigin: "anonymous",
+            // Сохраняем оригинальные позиции
+            originalLeft: elementData.startX,
+            originalTop: elementData.startY,
           });
           resolve(img);
         },
@@ -479,89 +490,13 @@ class KeychainEditor {
     });
   }
 
-  getRandomPosition(side, elementSize) {
-    const cordCenterX = this.currentCanvasWidth / 2;
-    const margin = 30;
-    const cordVisualWidth =
-      this.options.cordWidth *
-      (this.currentCanvasWidth / this.originalCanvasWidth);
-    const padding = 20;
-
-    let minX, maxX;
-    if (side === "left") {
-      minX = margin;
-      maxX = cordCenterX - cordVisualWidth / 2 - padding - elementSize;
-    } else {
-      minX = cordCenterX + cordVisualWidth / 2 + padding;
-      maxX = this.currentCanvasWidth - margin - elementSize;
-    }
-
-    const minY = margin + 50;
-    const maxY = this.currentCanvasHeight - margin - elementSize;
-
-    const x = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
-    const y = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
-
-    return { x, y, side };
-  }
-
-  doRectanglesOverlap(rect1, rect2) {
-    return (
-      rect1.x < rect2.x + rect2.width &&
-      rect1.x + rect1.width > rect2.x &&
-      rect1.y < rect2.y + rect2.height &&
-      rect1.y + rect1.height > rect2.y
-    );
-  }
-
-  isPositionOverlapping(newPos, existingPositions, elementSize) {
-    const newRect = {
-      x: newPos.x,
-      y: newPos.y,
-      width: elementSize,
-      height: elementSize,
-    };
-    for (const pos of existingPositions) {
-      const existingRect = {
-        x: pos.x,
-        y: pos.y,
-        width: elementSize,
-        height: elementSize,
-      };
-      if (this.doRectanglesOverlap(newRect, existingRect)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   createElements() {
-    const elementSize = this.options.elementWidth;
-    const usedPositions = [];
-
-    const elementPromises = this.options.elementsData.map((imageUrl, index) => {
-      const side = index % 2 === 0 ? "left" : "right";
-      let position;
-      let attempts = 0;
-      const maxAttempts = 20;
-      do {
-        position = this.getRandomPosition(side, elementSize);
-        attempts++;
-      } while (
-        attempts < maxAttempts &&
-        this.isPositionOverlapping(position, usedPositions, elementSize)
-      );
-      usedPositions.push(position);
-      position.side = side;
-      return this.createElement(imageUrl, position);
+    const elementPromises = this.options.elementsData.map((elementData) => {
+      return this.createElement(elementData);
     });
 
     Promise.all(elementPromises).then((elements) => {
       elements.forEach((element) => {
-        const originalPos = this.getOriginalPosition(element.left, element.top);
-        element.originalLeft = originalPos.x;
-        element.originalTop = originalPos.y;
-
         element.on("moving", () => {
           // --- ИСПРАВЛЕННОЕ Ограничение движения в пределах холста ---
           const elementWidth = element.width * element.scaleX;
@@ -736,19 +671,12 @@ class KeychainEditor {
       this.currentCord = cord;
       this.canvas.add(cord);
       this.canvas.sendToBack(cord);
-      if (this.semiRing) {
-        this.canvas.sendToBack(this.semiRing);
-      }
       this.canvas.renderAll();
       this.applyResponsive();
     });
   }
 
   reset() {
-    const leftPositions = [];
-    const rightPositions = [];
-    const elementSize = this.options.elementWidth;
-
     // Очищаем массив элементов на шнурке
     this.elementsOnCord = [];
 
@@ -757,35 +685,19 @@ class KeychainEditor {
         element.onCord = false;
         element.positionIndex = -1;
       }
-      element.side = element.originalSide;
 
-      let newPosition;
-      let attempts = 0;
-      const maxAttempts = 20;
-      const positionsArray =
-        element.side === "left" ? leftPositions : rightPositions;
-      do {
-        newPosition = this.getRandomPosition(element.side, elementSize);
-        attempts++;
-      } while (
-        attempts < maxAttempts &&
-        this.isPositionOverlapping(newPosition, positionsArray, elementSize)
+      // Возвращаем элемент в его стартовую позицию
+      const scaledPos = this.getScaledPosition(
+        element.originalLeft,
+        element.originalTop
       );
-      positionsArray.push(newPosition);
-
-      const originalPos = this.getOriginalPosition(
-        newPosition.x,
-        newPosition.y
-      );
-      element.originalLeft = originalPos.x;
-      element.originalTop = originalPos.y;
 
       this.animateElement(
         element,
         element.left,
         element.top,
-        newPosition.x,
-        newPosition.y
+        scaledPos.x,
+        scaledPos.y
       );
     });
 
@@ -805,23 +717,18 @@ class KeychainEditor {
 
       // Анимируем старые элементы away
       const animations = elementsToDetach.map((element) => {
-        const elementSize = this.options.elementWidth;
-        const newPosition = this.getRandomPosition(
-          element.originalSide,
-          elementSize
+        // Возвращаем элемент в его стартовую позицию
+        const scaledPos = this.getScaledPosition(
+          element.originalLeft,
+          element.originalTop
         );
-        const originalPos = this.getOriginalPosition(
-          newPosition.x,
-          newPosition.y
-        );
-        element.originalLeft = originalPos.x;
-        element.originalTop = originalPos.y;
+
         return this.animateElementPromise(
           element,
           element.left,
           element.top,
-          newPosition.x,
-          newPosition.y,
+          scaledPos.x,
+          scaledPos.y,
           400
         );
       });
@@ -882,7 +789,7 @@ class KeychainEditor {
     });
   }
 
-  // НОВЫЙ публичный метод для изменения максимального количества элементов
+  // метод для изменения максимального количества элементов
   setMaxElements(newMax) {
     if (newMax < 1) return; // Не позволяем установить 0 или отрицательное значение
 
@@ -896,23 +803,19 @@ class KeychainEditor {
       elementsToRemove.forEach((element) => {
         element.onCord = false;
         element.positionIndex = -1;
-        const elementSize = this.options.elementWidth;
-        const newPosition = this.getRandomPosition(
-          element.originalSide,
-          elementSize
+
+        // Возвращаем элемент в его стартовую позицию
+        const scaledPos = this.getScaledPosition(
+          element.originalLeft,
+          element.originalTop
         );
-        const originalPos = this.getOriginalPosition(
-          newPosition.x,
-          newPosition.y
-        );
-        element.originalLeft = originalPos.x;
-        element.originalTop = originalPos.y;
+
         this.animateElement(
           element,
           element.left,
           element.top,
-          newPosition.x,
-          newPosition.y
+          scaledPos.x,
+          scaledPos.y
         );
       });
     }
