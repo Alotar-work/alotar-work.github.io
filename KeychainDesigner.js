@@ -287,7 +287,20 @@ class KeychainEditor {
     let totalHeight = 0;
     // Сортируем элементы для сохранения порядка
     this.elementsOnCord.sort((a, b) => a.positionIndex - b.positionIndex);
+
+    // Вычисляем масштаб для элементов на шнурке
+    const targetWidth =
+      this.options.elementWidth *
+      (this.currentCanvasWidth / this.originalCanvasWidth);
+
     this.elementsOnCord.forEach((element) => {
+      // Обновляем масштаб элементов на шнурке
+      const elementScale = targetWidth / element.width;
+      element.set({
+        scaleX: elementScale,
+        scaleY: elementScale,
+      });
+
       totalHeight += element.height * element.scaleY;
     });
 
@@ -329,9 +342,9 @@ class KeychainEditor {
     const style = document.createElement("style");
     style.textContent = `
             .control-panel { padding: 15px 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; width: 100%; box-sizing: border-box; }
-            .control-panel-left { margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
-            .control-panel-right { margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
-            .reset-button, .random-button { background: transparent; border: 2px solid black; padding: 8px 15px; cursor: pointer; transition: background 0.3s; font-size: 16px; font-family: 'Arial'; letter-spacing: 0em; }
+            .control-panel-left { display: flex; align-items: center; gap: 15px; }
+            .control-panel-right { display: flex; align-items: center; gap: 15px; }
+            .reset-button, .random-button { margin-bottom: 10px; background: transparent; border: 2px solid black; padding: 8px 15px; cursor: pointer; transition: background 0.3s; font-size: 16px; font-family: 'Arial'; letter-spacing: 0em; }
             .reset-button:hover, .random-button:hover { background: black; color: white; }
             .cord-label { font-size: 16px; font-family: 'Arial'; letter-spacing: 0em; }
             .max-elements-label { font-size: 16px; font-family: 'Arial'; letter-spacing: 0em; }
@@ -583,6 +596,17 @@ class KeychainEditor {
     element.positionIndex = this.elementsOnCord.length;
     this.elementsOnCord.push(element);
     element.left = this.currentCanvasWidth / 2;
+
+    // Устанавливаем правильный масштаб для элемента на шнурке
+    const targetWidth =
+      this.options.elementWidth *
+      (this.currentCanvasWidth / this.originalCanvasWidth);
+    const elementScale = targetWidth / element.width;
+    element.set({
+      scaleX: elementScale,
+      scaleY: elementScale,
+    });
+
     this.updateCordElements();
     element.setCoords();
   }
@@ -900,6 +924,3 @@ class KeychainEditor {
     });
   }
 }
-
-
-
