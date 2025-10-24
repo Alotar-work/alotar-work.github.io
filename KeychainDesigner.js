@@ -293,7 +293,7 @@ class KeychainEditor {
 
     // 2. Находим центральную точку для распределения (идеальный центр минус 50px)
     const verticalOffset =
-      50 * (this.currentCanvasHeight / this.originalCanvasHeight);
+      20 * (this.currentCanvasHeight / this.originalCanvasHeight);
     const centerY = visibleCordHeight / 2 - verticalOffset;
 
     // 3. Вычисляем начальную Y-координату для первого элемента
@@ -900,4 +900,5 @@ class KeychainEditor {
     });
   }
 }
+
 
