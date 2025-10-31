@@ -5,7 +5,7 @@ class KeychainEditor {
       height: 500, // Уменьшаем высоту канваса, так как панель теперь под ним
       backgroundColor: options.backgroundColor || "#f9f9f9",
       cordWidth: options.cordWidth || 100,
-      elementWidth: options.elementWidth || 70,
+      elementWidth: options.elementWidth || 60,
       cordColor: options.cordColor || "#555",
       maxElements: options.maxElements || 4,
       cordUrls: options.cordUrls || {
@@ -129,16 +129,19 @@ class KeychainEditor {
     }
   }
 
-  initializeEditor() {
+  async initializeEditor() {
     this.createCanvas();
     this.setupCanvas();
     this.createControlPanel();
-    this.initCord();
+
+    await this.initCord();
+
     this.setupEventListeners();
     this.setupResizeObserver();
-    setTimeout(() => {
-      this.applyResponsive();
-    }, 500);
+
+    this.applyResponsive();
+
+    this.createElements();
   }
 
   createCanvas() {
@@ -258,9 +261,10 @@ class KeychainEditor {
       const elementScale = targetWidth / element.width;
 
       if (!element.onCord) {
+        // Используем начальные позиции (initialLeft/initialTop) вместо оригинальных
         const scaledPos = this.getScaledPosition(
-          element.originalLeft,
-          element.originalTop
+          element.initialLeft,
+          element.initialTop
         );
         element.set({
           left: scaledPos.x,
@@ -353,6 +357,9 @@ class KeychainEditor {
             .cord-color { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: border 0.3s; }
             .cord-color:hover { border-color: #333; }
             .cord-color.active { border-color: #333; box-shadow: 0 0 5px rgba(0,0,0,0.3); }
+            .cord-icon { width: 30px; height: 30px; cursor: pointer; border: 2px solid transparent; transition: all 0.3s; border-radius: 50%; }
+            .cord-icon:hover { border-color: #333; }
+            .cord-icon.active { border-color: #333; box-shadow: 0 0 5px rgba(0,0,0,0.3); }
           `;
     document.head.appendChild(style);
 
@@ -379,19 +386,83 @@ class KeychainEditor {
     cordLabel.textContent = "Шнурки:";
     const cordColors = document.createElement("div");
     cordColors.className = "cord-colors";
+
+    // SVG иконки для шнурков
+    const svgIcons = {
+      green: `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 318 318">
+              <defs>
+                <clipPath id="clippath">
+                  <circle fill="none" cx="159" cy="159" r="157.92"/>
+                </clipPath>
+              </defs>
+              <g>
+                <g id="Layer_1">
+                  <g clip-path="url(#clippath)">
+                    <rect fill="#00b25d" x="1.08" y="1.08" width="105.28" height="105.28"/>
+                    <rect x="106.36" y="1.08" width="105.28" height="105.28"/>
+                    <rect fill="#00b25d" x="211.64" y="1.08" width="105.28" height="105.28"/>
+                    <rect x="1.08" y="106.36" width="105.28" height="105.28"/>
+                    <rect fill="#00b25d" x="106.36" y="106.36" width="105.28" height="105.28"/>
+                    <rect x="211.64" y="106.36" width="105.28" height="105.28"/>
+                    <rect fill="#00b25d" x="1.08" y="211.64" width="105.28" height="105.28"/>
+                    <rect x="106.36" y="211.64" width="105.28" height="105.28"/>
+                    <rect fill="#00b25d" x="211.64" y="211.64" width="105.28" height="105.28"/>
+                  </g>
+                </g>
+              </g>
+            </svg>`,
+      gray: `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 318 318">
+              <defs>
+                <clipPath id="clippath">
+                  <circle fill="none" cx="159" cy="159" r="157.92"/>
+                </clipPath>
+              </defs>
+              <g>
+                <g id="Layer_1">
+                  <g clip-path="url(#clippath)">
+                    <rect fill="#00b25d" x="106.36" y="-42.53" width="105.28" height="105.28" transform="translate(53.72 -109.47) rotate(45)"/>
+                    <rect fill="#a01aff" x="180.8" y="31.91" width="105.28" height="105.28" transform="translate(128.16 -140.31) rotate(45)"/>
+                    <rect fill="#ff1515" x="255.25" y="106.36" width="105.28" height="105.28" transform="translate(202.61 -171.14) rotate(45)"/>
+                    <rect fill="#a01aff" x="31.91" y="31.91" width="105.28" height="105.28" transform="translate(84.55 -35.02) rotate(45)"/>
+                    <rect fill="#ff1515" x="106.36" y="106.36" width="105.28" height="105.28" transform="translate(159 -65.86) rotate(45)"/>
+                    <rect fill="#a01aff" x="180.8" y="180.8" width="105.28" height="105.28" transform="translate(233.45 -96.7) rotate(45)"/>
+                    <rect fill="#ff1515" x="-42.53" y="106.36" width="105.28" height="105.28" transform="translate(115.39 39.42) rotate(45)"/>
+                    <rect fill="#a01aff" x="31.91" y="180.8" width="105.28" height="105.28" transform="translate(189.84 8.59) rotate(45)"/>
+                    <rect fill="#00b25d" x="106.36" y="255.25" width="105.28" height="105.28" transform="translate(264.28 -22.25) rotate(45)"/>
+                  </g>
+                </g>
+              </g>
+            </svg>`,
+      blue: `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 318 318">
+              <defs>
+                <clipPath id="clippath">
+                  <circle fill="none" cx="159" cy="159" r="157.92"/>
+                </clipPath>
+              </defs>
+              <g>
+                <g id="Layer_1">
+                  <g clip-path="url(#clippath)">
+                    <rect fill="#0054fc" x="-15.87" y="-8.5" width="348.02" height="341.81"/>
+                    <rect fill="#aaa" x="211.64" y="1.08" width="105.28" height="105.28"/>
+                    <rect fill="#aaa" x="106.36" y="106.36" width="105.28" height="105.28"/>
+                    <rect fill="#aaa" x="1.08" y="211.64" width="105.28" height="105.28"/>
+                  </g>
+                </g>
+              </g>
+            </svg>`,
+    };
+
     const colors = ["green", "gray", "blue"];
     colors.forEach((color) => {
-      const circle = document.createElement("div");
-      circle.className = `cord-color ${color === "green" ? "active" : ""}`;
-      circle.style.backgroundColor =
-        color === "green"
-          ? "#4CAF50"
-          : color === "gray"
-          ? "#9E9E9E"
-          : "#2196F3";
-      circle.dataset.color = color;
-      cordColors.appendChild(circle);
+      const iconContainer = document.createElement("div");
+      iconContainer.className = `cord-icon ${
+        color === "green" ? "active" : ""
+      }`;
+      iconContainer.dataset.color = color;
+      iconContainer.innerHTML = svgIcons[color];
+      cordColors.appendChild(iconContainer);
     });
+
     rightPanel.appendChild(cordLabel);
     rightPanel.appendChild(cordColors);
 
@@ -401,12 +472,10 @@ class KeychainEditor {
   }
 
   initCord() {
-    this.createCord(this.currentCordColor).then((cord) => {
+    return this.createCord(this.currentCordColor).then((cord) => {
       this.currentCord = cord;
       this.canvas.add(cord);
       this.canvas.sendToBack(cord);
-      this.canvas.renderAll();
-      this.createElements();
     });
   }
 
@@ -417,14 +486,14 @@ class KeychainEditor {
     document.getElementById("random-button").addEventListener("click", () => {
       this.generateRandomKeychain();
     });
-    document.querySelectorAll(".cord-color").forEach((circle) => {
-      circle.addEventListener("click", () => {
-        const color = circle.dataset.color;
+    document.querySelectorAll(".cord-icon").forEach((icon) => {
+      icon.addEventListener("click", () => {
+        const color = icon.dataset.color;
         this.changeCord(color);
         document
-          .querySelectorAll(".cord-color")
+          .querySelectorAll(".cord-icon")
           .forEach((c) => c.classList.remove("active"));
-        circle.classList.add("active");
+        icon.classList.add("active");
       });
     });
   }
@@ -435,14 +504,8 @@ class KeychainEditor {
         this.options.cordUrls[color],
         (img) => {
           this.cordImageAspectRatio = img.height / img.width;
-          const scaleX = this.currentCanvasWidth / this.originalCanvasWidth;
-          const cordWidth = this.options.cordWidth * scaleX;
-          const cordHeight = cordWidth * this.cordImageAspectRatio;
+
           img.set({
-            left: this.currentCanvasWidth / 2 - cordWidth / 2,
-            top: 0,
-            scaleX: cordWidth / img.width,
-            scaleY: cordHeight / img.height,
             selectable: false,
             evented: false,
             lockMovementX: true,
@@ -492,9 +555,12 @@ class KeychainEditor {
             positionIndex: -1,
             isDetaching: false,
             crossOrigin: "anonymous",
-            // Сохраняем оригинальные позиции
+            // Сохраняем оригинальные и начальные позиции
             originalLeft: elementData.startX,
             originalTop: elementData.startY,
+            // Добавляем начальные позиции, которые не будут изменяться
+            initialLeft: elementData.startX,
+            initialTop: elementData.startY,
           });
           resolve(img);
         },
@@ -511,7 +577,13 @@ class KeychainEditor {
     Promise.all(elementPromises).then((elements) => {
       elements.forEach((element) => {
         element.on("moving", () => {
-          // --- ИСПРАВЛЕННОЕ Ограничение движения в пределах холста ---
+          // Запоминаем начальную позицию перетаскивания
+          if (typeof element._dragStartLeft === "undefined") {
+            element._dragStartLeft = element.left;
+            element._dragStartTop = element.top;
+          }
+
+          // --- Ограничение движения в пределах холста ---
           const elementWidth = element.width * element.scaleX;
           const elementHeight = element.height * element.scaleY;
 
@@ -573,19 +645,34 @@ class KeychainEditor {
               if (this.elementsOnCord.length < this.options.maxElements) {
                 this.attachElementToCord(element);
               } else {
-                this.handleNoDropZone(element);
-                updateOriginalPosition();
+                // Если шнурок полон, возвращаем элемент на место
+                const startPos = {
+                  left: element._dragStartLeft,
+                  top: element._dragStartTop,
+                };
+                this.animateElement(
+                  element,
+                  element.left,
+                  element.top,
+                  startPos.left,
+                  startPos.top
+                );
               }
             } else {
               this.handleNoDropZone(element);
               updateOriginalPosition();
             }
           }
+
+          // Очищаем временные переменные после завершения перетаскивания
+          delete element._dragStartLeft;
+          delete element._dragStartTop;
         });
 
         this.canvas.add(element);
         this.templateElements.push(element);
       });
+      // Это теперь первая и единственная отрисовка при инициализации
       this.canvas.renderAll();
     });
   }
@@ -624,7 +711,7 @@ class KeychainEditor {
     this.updateCordElements();
   }
 
-  // ИСПРАВЛЕННЫЙ метод для проверки обмена элементов местами
+  // метод для проверки обмена элементов местами
   checkForSwap(movingElement) {
     if (!movingElement.onCord) return;
 
@@ -710,10 +797,10 @@ class KeychainEditor {
         element.positionIndex = -1;
       }
 
-      // Возвращаем элемент в его стартовую позицию
+      // Возвращаем элемент в его начальную позицию (используем initialLeft/initialTop)
       const scaledPos = this.getScaledPosition(
-        element.originalLeft,
-        element.originalTop
+        element.initialLeft,
+        element.initialTop
       );
 
       this.animateElement(
@@ -739,12 +826,12 @@ class KeychainEditor {
         element.positionIndex = -1;
       });
 
-      // Анимируем старые элементы away
+      // Анимируем старые элементы
       const animations = elementsToDetach.map((element) => {
-        // Возвращаем элемент в его стартовую позицию
+        // Возвращаем элемент в его начальную позицию
         const scaledPos = this.getScaledPosition(
-          element.originalLeft,
-          element.originalTop
+          element.initialLeft,
+          element.initialTop
         );
 
         return this.animateElementPromise(
@@ -828,10 +915,10 @@ class KeychainEditor {
         element.onCord = false;
         element.positionIndex = -1;
 
-        // Возвращаем элемент в его стартовую позицию
+        // Возвращаем элемент в его начальную позицию
         const scaledPos = this.getScaledPosition(
-          element.originalLeft,
-          element.originalTop
+          element.initialLeft,
+          element.initialTop
         );
 
         this.animateElement(
