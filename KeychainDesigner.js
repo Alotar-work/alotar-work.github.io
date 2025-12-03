@@ -13,6 +13,10 @@ class KeychainEditor {
           "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-a8d54636b48977d8e3c942463a137662.png",
         gray: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-f0e15c5e7670d46991cf515363e0e6d8.png",
         blue: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-89ce49869885b935e240762b42f50034.png",
+        white:
+          "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-02720b441721d831fe49cdf65e512f39.png",
+        lightgray:
+          "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-9229b498ea81db130b331dceae23f864.png",
       },
       elementsData: options.elementsData || [
         {
@@ -450,9 +454,43 @@ class KeychainEditor {
                 </g>
               </g>
             </svg>`,
+      white: `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 317 317">
+              <defs>
+                <clipPath id="clippath_white">
+                  <circle fill="none" cx="158.5" cy="158.5" r="157.92"/>
+                </clipPath>
+              </defs>
+              <g clip-path="url(#clippath_white)">
+                <rect fill="#aaa" x="211.14" y=".58" width="105.28" height="105.28"/>
+                <rect fill="#aaa" x="105.86" y="105.86" width="105.28" height="105.28"/>
+                <rect fill="#aaa" x=".58" y="211.14" width="105.28" height="105.28"/>
+                <g>
+                  <polygon fill="#f4f4f4" points="211.14 105.86 211.14 .58 105.86 .58 .58 .58 .58 105.86 .58 211.14 105.86 211.14 105.86 105.86 211.14 105.86"/>
+                  <polygon fill="#f4f4f4" points="211.14 105.86 211.14 211.14 105.86 211.14 105.86 316.42 211.14 316.42 316.42 316.42 316.42 211.14 316.42 105.86 211.14 105.86"/>
+                </g>
+              </g>
+            </svg>`,
+      lightgray: `<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 317 317">
+              <defs>
+                <clipPath id="clippath_lightgray">
+                  <circle fill="none" cx="158.28" cy="158.5" r="157.92"/>
+                </clipPath>
+              </defs>
+              <g clip-path="url(#clippath_lightgray)">
+                <rect x="105.64" y="-43.03" width="105.28" height="105.28" transform="translate(53.15 -109.11) rotate(45)"/>
+                <rect x="180.09" y="31.41" width="105.28" height="105.28" transform="translate(127.6 -139.94) rotate(45)"/>
+                <rect x="254.53" y="105.86" width="105.28" height="105.28" transform="translate(202.05 -170.78) rotate(45)"/>
+                <rect fill="#aaa" x="31.19" y="31.41" width="105.28" height="105.28" transform="translate(83.99 -34.66) rotate(45)"/>
+                <rect x="105.64" y="105.86" width="105.28" height="105.28" transform="translate(158.44 -65.5) rotate(45)"/>
+                <rect fill="#aaa" x="180.09" y="180.3" width="105.28" height="105.28" transform="translate(232.88 -96.34) rotate(45)"/>
+                <rect x="-43.25" y="105.86" width="105.28" height="105.28" transform="translate(114.83 39.78) rotate(45)"/>
+                <rect x="31.19" y="180.3" width="105.28" height="105.28" transform="translate(189.27 8.95) rotate(45)"/>
+                <rect x="105.64" y="254.75" width="105.28" height="105.28" transform="translate(263.72 -21.89) rotate(45)"/>
+              </g>
+            </svg>`,
     };
 
-    const colors = ["green", "gray", "blue"];
+    const colors = ["green", "gray", "blue", "white", "lightgray"];
     colors.forEach((color) => {
       const iconContainer = document.createElement("div");
       iconContainer.className = `cord-icon ${
