@@ -614,6 +614,7 @@ class KeychainEditor {
             // Добавляем начальные позиции, которые не будут изменяться
             initialLeft: elementData.startX,
             initialTop: elementData.startY,
+            title: elementData.title,
           });
           resolve(img);
         },
