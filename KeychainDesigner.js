@@ -1002,6 +1002,7 @@ class KeychainEditor {
     }
     const elementsOnCord = [];
     this.elementsOnCord.forEach((element) => {
+      console.log(element);
       if (element && element.title) {
         elementsOnCord.push({ title: element.title });
       }
@@ -1065,3 +1066,4 @@ class KeychainEditor {
     });
   }
 }
+
