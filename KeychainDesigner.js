@@ -83,7 +83,7 @@ class KeychainEditor {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-6875de21e6e375e170c093ab87049ede.png",
           startX: 400,
           startY: 200,
-          ttile: "kotok-a-rhomb-up",
+          title: "kotok-a-rhomb-up",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-ab6f9d040c22053f587d382aaf6b833c.png",
@@ -1002,7 +1002,6 @@ class KeychainEditor {
     }
     const elementsOnCord = [];
     this.elementsOnCord.forEach((element) => {
-      console.log(element);
       if (element && element.title) {
         elementsOnCord.push({ title: element.title });
       }
@@ -1066,4 +1065,3 @@ class KeychainEditor {
     });
   }
 }
-
