@@ -23,76 +23,91 @@ class KeychainEditor {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-a257b6ed2a1e889cf7b2888816e2164e.png",
           startX: 130,
           startY: 100,
+          title: "kotok-a-head",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-f4167800bbf18364ea389b94eff678e8.png",
           startX: 200,
           startY: 150,
+          title: "kotok-a-orange-ball",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-13598614d25eaf9f8f552c1f8a90915f.png",
           startX: 80,
           startY: 180,
+          title: "kotok-a-green-bud-up",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-8979b15d0009f1d7efdfabe4d7a0f117.png",
           startX: 120,
           startY: 250,
+          title: "kotok-a-rhomb-down",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-a741507ea62d41ee92bc57542c25f62f.png",
           startX: 200,
           startY: 250,
+          title: "kotok-a-yellow-block-down",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-e29ff47f42cd1974ada3e71a9ad098f2.png",
           startX: 70,
           startY: 310,
+          title: "kotok-a-red-bud-down",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-95a1689816a9b200198ae5ee15b44acd.png",
           startX: 180,
           startY: 315,
+          title: "kotok-a-flat-black",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-01cfdab6e0b16424cd8ae2c0c89a596b.png",
           startX: 150,
           startY: 390,
+          title: "kotok-a-stripe-bud-up",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-a202d5490f2e9f72714aaa6fe0440f61.png",
           startX: 430,
           startY: 100,
+          title: "kotok-a-yellow-block-up",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-c5993e649898375b0af26a26195d3b82.png",
           startX: 510,
           startY: 150,
+          title: "kotok-a-red-bud-up",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-6875de21e6e375e170c093ab87049ede.png",
           startX: 400,
           startY: 200,
+          ttile: "kotok-a-rhomb-up",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-ab6f9d040c22053f587d382aaf6b833c.png",
           startX: 510,
           startY: 250,
+          title: "kotok-a-flat-pink",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-97e9860e583911096942c661d76bbc86.png",
           startX: 400,
           startY: 300,
+          title: "kotok-a-stripe-bud-down",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-fe44024ceed694cb5a913f0692ec5a85.png",
           startX: 510,
           startY: 330,
+          title: "kotok-a-black-ball",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-6f1472f659d16c9078497b32c976781b.png",
           startX: 450,
           startY: 400,
+          title: "kotok-a-green-bud-down",
         },
       ],
     };
@@ -351,8 +366,8 @@ class KeychainEditor {
     style.textContent = `
             .control-panel { padding: 15px 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; width: 100%; box-sizing: border-box; }
             .control-panel-left { display: flex; align-items: center; gap: 15px; }
-            .control-panel-right { display: flex; align-items: center; gap: 15px; }
-            .reset-button, .random-button { color: black; margin-bottom: 10px; background: transparent; border: 2px solid black; padding: 8px 15px; cursor: pointer; transition: background 0.3s; font-size: 16px; font-family: 'Arial'; letter-spacing: 0em; }
+            .control-panel-right { margin-bottom: 10px; display: flex; align-items: center; gap: 15px; }
+            .reset-button, .random-button { margin-bottom: 10px; background: transparent; border: 2px solid black; padding: 8px 15px; cursor: pointer; transition: background 0.3s; font-size: 16px; font-family: 'Arial'; letter-spacing: 0em; }
             .reset-button:hover, .random-button:hover { background: black; color: white; }
             .cord-label { font-size: 16px; font-family: 'Arial'; letter-spacing: 0em; }
             .max-elements-label { font-size: 16px; font-family: 'Arial'; letter-spacing: 0em; }
@@ -986,8 +1001,8 @@ class KeychainEditor {
     }
     const elementsOnCord = [];
     this.elementsOnCord.forEach((element) => {
-      if (element && element.imageUrl) {
-        elementsOnCord.push({ imageUrl: element.imageUrl });
+      if (element && element.title) {
+        elementsOnCord.push({ title: element.title });
       }
     });
     const result = { cord: cordImageUrl, elements: elementsOnCord };
@@ -1049,4 +1064,3 @@ class KeychainEditor {
     });
   }
 }
-
