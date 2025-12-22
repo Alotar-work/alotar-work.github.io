@@ -1,36 +1,44 @@
 document.addEventListener("DOMContentLoaded", function () {
+  const debug = new DebugConsole();
+
   const spanHTML =
     '<span class="mod--fs_20" style="font-size:20px;">Количество элементов:</span>';
   const keychainEditor = new KeychainEditor();
   keychainEditor.init(".product-gallery.layout-square");
+  debug.log("Инициализирован конструктор");
 
   var keychainClear = getCookie("keychainClear");
   if (keychainClear == 1) {
     setCookie("keychainDesign", JSON.stringify([]), 7);
     setCookie("keychainClear", 0, 7);
     keychainClear = 0;
+    debug.log("Очищеный куки");
   }
 
   var keychainDesign = getCookie("keychainDesign");
   if (keychainDesign) {
     keychainDesign = JSON.parse(keychainDesign);
+    debug.log("Получены данные о брелоках из кук:");
+    debug.log(keychainDesign);
   } else {
     keychainDesign = [];
+    debug.log("Данные о брелоках не найдены в куках");
   }
 
   function handleSelectChange(optionText) {
     const numberValue = parseInt(optionText, 10);
     let finalValue = isNaN(numberValue) ? 4 : numberValue;
     keychainEditor.setMaxElements(finalValue);
+    debug.log("Измененно количество элементов");
   }
 
   const selectCheck = setInterval(() => {
     const $selectElement = $("select.js--selectize");
-
+    debug.log("Ищем select с выбором количества элементов");
     if ($selectElement.length) {
-      // Проверяем, инициализирован ли selectize
+      debug.log("Проверяем, инициализирован ли selectize");
       if ($selectElement[0].selectize) {
-        // Десктопная версия с selectize
+        debug.log("Selectize инициализирован");
         const selectizeInstance = $selectElement[0].selectize;
         selectizeInstance.setValue(2644630);
         $selectElement[0].insertAdjacentHTML("beforebegin", spanHTML);
@@ -41,11 +49,14 @@ document.addEventListener("DOMContentLoaded", function () {
           handleSelectChange(optionText);
         });
         clearInterval(selectCheck);
-        console.log("Selectize обработчик установлен");
+        debug.log("Selectize обработчик установлен");
       } else {
-        // Мобильная версия с обычным select - проверяем наличие опций
+        debug.log(
+          "Selectize не инициализирован, значит это мобильная версия с обычным select - проверяем наличие опций"
+        );
         const hasOptions = $selectElement.find("option").length > 0;
         if (hasOptions) {
+          debug.log("Опции найдены");
           const emailI = $("#KD-email");
           if (emailI.length) {
             $(emailI[0]).css("border-bottom", "2px solid #626262");
@@ -62,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
           });
           clearInterval(selectCheck);
-          console.log("Обычный select обработчик установлен");
+          debug.log("Обычный select обработчик установлен");
         }
       }
     }
@@ -70,11 +81,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const addBtn = document.getElementById("skuadd");
   if (addBtn) {
+    debug.log("Найдено кнопка добавления в корзину");
     const container = addBtn.parentNode;
 
     addBtn.style.position = "absolute";
     addBtn.style.top = "-999px";
-
+    debug.log("Кнопка добавления в корзину скрыта");
     var emailInput = document.createElement("input");
     emailInput.type = "email";
     emailInput.id = "KD-email";
@@ -93,6 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
     emailInput.style.gridColumn = "span 2";
 
     container.appendChild(emailInput);
+    debug.log("Добавлено поле 'Email'");
 
     var doneBtn = document.createElement("button");
     doneBtn.id = "KD-done-button";
@@ -101,10 +114,13 @@ document.addEventListener("DOMContentLoaded", function () {
     doneBtn.querySelector("span").textContent = "Готово";
 
     doneBtn.addEventListener("click", function () {
+      debug.log("Нажата кнопка 'Готово'");
       const resultJson = keychainEditor.getResultJson();
       const resultObj = JSON.parse(resultJson);
       const emailInput = document.getElementById("KD-email");
-
+      debug.log("Получены данные конструктора:");
+      debug.log(resultObj);
+      debug.log("Получен Email: " + emailInput.value);
       if (!resultJson) {
         alert("Ошибка сохранения. Обратитесь в поддержку.");
         return;
@@ -122,14 +138,17 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!Array.isArray(keychainDesign)) {
         keychainDesign = [];
       }
-
+      debug.log("Данные брелоков перед изменением:");
+      debug.log(keychainDesign);
       var fourCount = 0;
       var eightCount = 0;
       keychainDesign.forEach(function (keychain) {
         if (keychain.length == 4) fourCount++;
         if (keychain.length == 8) eightCount++;
       });
-
+      debug.log("Уже добалено в корзину:");
+      debug.log("Брелоков с четырмя элементами - " + fourCount);
+      debug.log("Брелоков с восьмью элементами - " + eightCount);
       if (
         fourCount == 3 ||
         (eightCount == 1 && fourCount == 1) ||
@@ -155,11 +174,18 @@ document.addEventListener("DOMContentLoaded", function () {
           design: resultJson,
         };
         keychainDesign.push(keychainInfo);
-
+        debug.log(
+          "Добавлен брелок в корзину. Текущие данные брелоков в корзине:"
+        );
+        debug.log(keychainDesign);
         setCookie("keychainDesign", JSON.stringify(keychainDesign), 7);
         setCookie("kD_email", emailInput.value, 7);
+        debug.log("Данные из кук:");
+        debug.log(getCookie("keychainDesign"));
         addBtn.click();
+        debug.log("Симулировано нажатие на кнопку 'Добавить в корзину'");
         window.location.href = "/playthings/cart";
+        debug.log("Переадресация в корзину");
       } else {
         alert("Вы добавили недостаточно элементов");
         return;
@@ -167,6 +193,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     container.appendChild(doneBtn);
+    debug.log("Добавлено кнопка 'Готово'");
   }
   function setCookie(name, value, days) {
     const expires = new Date();
@@ -182,5 +209,44 @@ document.addEventListener("DOMContentLoaded", function () {
   function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+  }
+  function debug.log(message) {
+    let debugContainer = document.getElementById("debug-container");
+    if (!debugContainer) {
+      debugContainer = document.createElement("div");
+      debugContainer.id = "debug-container";
+      Object.assign(debugContainer.style, {
+        position: "fixed",
+        bottom: "0",
+        left: "0",
+        width: "100%",
+        height: "200px",
+        backgroundColor: "rgba(0, 0, 0, 0.85)",
+        color: "#00ff00",
+        fontFamily: "Courier New, Courier, monospace",
+        fontSize: "14px",
+        padding: "10px",
+        boxSizing: "border-box",
+        overflowY: "auto",
+        zIndex: "9999",
+        borderTop: "2px solid #00ff00",
+        wordBreak: "break-all",
+      });
+      const logContent = document.createElement("pre");
+      logContent.style.margin = "0";
+      logContent.style.whiteSpace = "pre-wrap";
+      debugContainer.appendChild(logContent);
+      document.body.appendChild(debugContainer);
+    }
+    const logContent = debugContainer.querySelector("pre");
+    const timestamp = new Date().toLocaleTimeString();
+    let textMessage;
+    if (typeof message === "object") {
+      textMessage = JSON.stringify(message, null, 2);
+    } else {
+      textMessage = String(message);
+    }
+    logContent.textContent += `[${timestamp}] ${textMessage}\n`;
+    debugContainer.scrollTop = debugContainer.scrollHeight;
   }
 });
