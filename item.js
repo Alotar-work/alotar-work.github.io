@@ -114,6 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
     doneBtn.querySelector("span").textContent = "Готово";
 
     doneBtn.addEventListener("click", function () {
+      doneBtn.setAttribute("disabled", "");
       debugConsole.log("Нажата кнопка 'Готово'");
       const resultJson = keychainEditor.getResultJson();
       const resultObj = JSON.parse(resultJson);
@@ -122,15 +123,18 @@ document.addEventListener("DOMContentLoaded", function () {
       debugConsole.log(resultObj);
       debugConsole.log("Получен Email: " + emailInput.value);
       if (!resultJson) {
+        doneBtn.removeAttribute("disabled");
         alert("Ошибка сохранения. Обратитесь в поддержку.");
         return;
       }
 
       if (!emailInput.value) {
+        doneBtn.removeAttribute("disabled");
         alert("Пожалуйста, укажите свой адрес электронной почты");
         return;
       }
       if (!isValidEmail(emailInput.value)) {
+        doneBtn.removeAttribute("disabled");
         alert("Пожалуйста, введите корректный адрес электронной почты");
         return;
       }
@@ -154,6 +158,7 @@ document.addEventListener("DOMContentLoaded", function () {
         (eightCount == 1 && fourCount == 1) ||
         (eightCount == 1 && fourCount == 0 && resultObj.elements.length == 8)
       ) {
+        doneBtn.removeAttribute("disabled");
         alert(
           "Пожалуйста, оформите заказ, прежде чем добавлять в корзину ещё один брелок."
         );
@@ -184,16 +189,19 @@ document.addEventListener("DOMContentLoaded", function () {
         debugConsole.log(getCookie("keychainDesign"));
         addBtn.click();
         debugConsole.log("Симулировано нажатие на кнопку 'Добавить в корзину'");
-        window.location.href = "/playthings/cart";
-        debugConsole.log("Переадресация в корзину");
+        setTimeout(function () {
+          debugConsole.log("Переадресация в корзину");
+          window.location.href = "/playthings/cart";
+        }, 1000);
       } else {
+        doneBtn.removeAttribute("disabled");
         alert("Вы добавили недостаточно элементов");
         return;
       }
     });
 
     container.appendChild(doneBtn);
-    debugConsole.log("Добавлено кнопка 'Готово'");
+    debugConsole.log("Добавлена кнопка 'Готово'");
   }
   function setCookie(name, value, days) {
     const expires = new Date();
