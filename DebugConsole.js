@@ -68,11 +68,30 @@ class DebugConsole {
       display: "flex",
       flexDirection: "column",
     });
+    this.clearButton = document.createElement("button");
+    this.clearButton.textContent = "Очистить";
+    Object.assign(this.clearButton.style, {
+      position: "absolute",
+      top: "10px",
+      right: "10px",
+      border: "1px solid #555",
+      backgroundColor: "rgba(255, 255, 255, 0.1)",
+      color: "#ccc",
+      cursor: "pointer",
+      padding: "5px 10px",
+      borderRadius: "4px",
+      fontSize: "12px",
+      zIndex: "10",
+    });
+    this.clearButton.addEventListener("click", () => {
+      this.clear();
+    });
     this.logContent = document.createElement("pre");
     this.logContent.style.margin = "0";
     this.logContent.style.whiteSpace = "pre-wrap";
     this.logContent.style.flexGrow = "1";
     this.container.appendChild(this.logContent);
+    this.container.appendChild(this.clearButton);
     document.body.appendChild(this.container);
   }
   log(message) {
