@@ -58,6 +58,8 @@ document.addEventListener("DOMContentLoaded", () => {
           const descInput = document.querySelector(
             'textarea[name="Комментарии к заказу"]'
           );
+          debugConsole.log("Полученые данные о брелоках из кук:");
+          debugConsole.log(keychainDesign);
 
           if (!keychainDesign) {
             document
@@ -70,6 +72,9 @@ document.addEventListener("DOMContentLoaded", () => {
                   modal.querySelector(".btn-success")?.click();
                 }
               });
+            debugConsole.log(
+              "В куках не найдены данные о брелоках. Всё найденные брулоки в корзине удалены."
+            );
           }
 
           const hasEightElements = Array.from(
@@ -128,6 +133,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 item
                   .querySelector(".md-shopcart__item-delete a")
                   ?.addEventListener("click", (e) => {
+                    debugConsole.log(
+                      "Клик на кнопку удаления брелока из корзины"
+                    );
                     newKeychainDesignArray = keychainDesignArray.filter(
                       function (keychain) {
                         return keychain.length !== elementCount;
@@ -148,6 +156,9 @@ document.addEventListener("DOMContentLoaded", () => {
               );
               keychainDesign = getCookie("keychainDesign");
               descInput.textContent = "Данные брелока: " + keychainDesign;
+              debugConsole.log("Подтверждение удалени брелока");
+              debugConsole.log("Обновлённые данные");
+              debugConsole.log(keychainDesign);
             });
           });
 
@@ -207,4 +218,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }, 2000);
 });
-
