@@ -1,44 +1,44 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const debug = new DebugConsole();
+  const debugConsole = new DebugConsole();
 
   const spanHTML =
     '<span class="mod--fs_20" style="font-size:20px;">Количество элементов:</span>';
   const keychainEditor = new KeychainEditor();
   keychainEditor.init(".product-gallery.layout-square");
-  debug.log("Инициализирован конструктор");
+  debugConsole.loglog("Инициализирован конструктор");
 
   var keychainClear = getCookie("keychainClear");
   if (keychainClear == 1) {
     setCookie("keychainDesign", JSON.stringify([]), 7);
     setCookie("keychainClear", 0, 7);
     keychainClear = 0;
-    debug.log("Очищеный куки");
+    debugConsole.loglog("Очищеный куки");
   }
 
   var keychainDesign = getCookie("keychainDesign");
   if (keychainDesign) {
     keychainDesign = JSON.parse(keychainDesign);
-    debug.log("Получены данные о брелоках из кук:");
-    debug.log(keychainDesign);
+    debugConsole.loglog("Получены данные о брелоках из кук:");
+    debugConsole.loglog(keychainDesign);
   } else {
     keychainDesign = [];
-    debug.log("Данные о брелоках не найдены в куках");
+    debugConsole.loglog("Данные о брелоках не найдены в куках");
   }
 
   function handleSelectChange(optionText) {
     const numberValue = parseInt(optionText, 10);
     let finalValue = isNaN(numberValue) ? 4 : numberValue;
     keychainEditor.setMaxElements(finalValue);
-    debug.log("Измененно количество элементов");
+    debugConsole.loglog("Измененно количество элементов");
   }
 
   const selectCheck = setInterval(() => {
     const $selectElement = $("select.js--selectize");
-    debug.log("Ищем select с выбором количества элементов");
+    debugConsole.loglog("Ищем select с выбором количества элементов");
     if ($selectElement.length) {
-      debug.log("Проверяем, инициализирован ли selectize");
+      debugConsole.loglog("Проверяем, инициализирован ли selectize");
       if ($selectElement[0].selectize) {
-        debug.log("Selectize инициализирован");
+        debugConsole.loglog("Selectize инициализирован");
         const selectizeInstance = $selectElement[0].selectize;
         selectizeInstance.setValue(2644630);
         $selectElement[0].insertAdjacentHTML("beforebegin", spanHTML);
@@ -49,14 +49,14 @@ document.addEventListener("DOMContentLoaded", function () {
           handleSelectChange(optionText);
         });
         clearInterval(selectCheck);
-        debug.log("Selectize обработчик установлен");
+        debugConsole.loglog("Selectize обработчик установлен");
       } else {
-        debug.log(
+        debugConsole.loglog(
           "Selectize не инициализирован, значит это мобильная версия с обычным select - проверяем наличие опций"
         );
         const hasOptions = $selectElement.find("option").length > 0;
         if (hasOptions) {
-          debug.log("Опции найдены");
+          debugConsole.loglog("Опции найдены");
           const emailI = $("#KD-email");
           if (emailI.length) {
             $(emailI[0]).css("border-bottom", "2px solid #626262");
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
           });
           clearInterval(selectCheck);
-          debug.log("Обычный select обработчик установлен");
+          debugConsole.loglog("Обычный select обработчик установлен");
         }
       }
     }
@@ -81,12 +81,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const addBtn = document.getElementById("skuadd");
   if (addBtn) {
-    debug.log("Найдено кнопка добавления в корзину");
+    debugConsole.loglog("Найдено кнопка добавления в корзину");
     const container = addBtn.parentNode;
 
     addBtn.style.position = "absolute";
     addBtn.style.top = "-999px";
-    debug.log("Кнопка добавления в корзину скрыта");
+    debugConsole.loglog("Кнопка добавления в корзину скрыта");
     var emailInput = document.createElement("input");
     emailInput.type = "email";
     emailInput.id = "KD-email";
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
     emailInput.style.gridColumn = "span 2";
 
     container.appendChild(emailInput);
-    debug.log("Добавлено поле 'Email'");
+    debugConsole.loglog("Добавлено поле 'Email'");
 
     var doneBtn = document.createElement("button");
     doneBtn.id = "KD-done-button";
@@ -114,13 +114,13 @@ document.addEventListener("DOMContentLoaded", function () {
     doneBtn.querySelector("span").textContent = "Готово";
 
     doneBtn.addEventListener("click", function () {
-      debug.log("Нажата кнопка 'Готово'");
+      debugConsole.loglog("Нажата кнопка 'Готово'");
       const resultJson = keychainEditor.getResultJson();
       const resultObj = JSON.parse(resultJson);
       const emailInput = document.getElementById("KD-email");
-      debug.log("Получены данные конструктора:");
-      debug.log(resultObj);
-      debug.log("Получен Email: " + emailInput.value);
+      debugConsole.loglog("Получены данные конструктора:");
+      debugConsole.loglog(resultObj);
+      debugConsole.loglog("Получен Email: " + emailInput.value);
       if (!resultJson) {
         alert("Ошибка сохранения. Обратитесь в поддержку.");
         return;
@@ -138,17 +138,17 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!Array.isArray(keychainDesign)) {
         keychainDesign = [];
       }
-      debug.log("Данные брелоков перед изменением:");
-      debug.log(keychainDesign);
+      debugConsole.loglog("Данные брелоков перед изменением:");
+      debugConsole.loglog(keychainDesign);
       var fourCount = 0;
       var eightCount = 0;
       keychainDesign.forEach(function (keychain) {
         if (keychain.length == 4) fourCount++;
         if (keychain.length == 8) eightCount++;
       });
-      debug.log("Уже добалено в корзину:");
-      debug.log("Брелоков с четырмя элементами - " + fourCount);
-      debug.log("Брелоков с восьмью элементами - " + eightCount);
+      debugConsole.loglog("Уже добалено в корзину:");
+      debugConsole.loglog("Брелоков с четырмя элементами - " + fourCount);
+      debugConsole.loglog("Брелоков с восьмью элементами - " + eightCount);
       if (
         fourCount == 3 ||
         (eightCount == 1 && fourCount == 1) ||
@@ -174,18 +174,18 @@ document.addEventListener("DOMContentLoaded", function () {
           design: resultJson,
         };
         keychainDesign.push(keychainInfo);
-        debug.log(
+        debugConsole.loglog(
           "Добавлен брелок в корзину. Текущие данные брелоков в корзине:"
         );
-        debug.log(keychainDesign);
+        debugConsole.loglog(keychainDesign);
         setCookie("keychainDesign", JSON.stringify(keychainDesign), 7);
         setCookie("kD_email", emailInput.value, 7);
-        debug.log("Данные из кук:");
-        debug.log(getCookie("keychainDesign"));
+        debugConsole.loglog("Данные из кук:");
+        debugConsole.loglog(getCookie("keychainDesign"));
         addBtn.click();
-        debug.log("Симулировано нажатие на кнопку 'Добавить в корзину'");
+        debugConsole.loglog("Симулировано нажатие на кнопку 'Добавить в корзину'");
         window.location.href = "/playthings/cart";
-        debug.log("Переадресация в корзину");
+        debugConsole.loglog("Переадресация в корзину");
       } else {
         alert("Вы добавили недостаточно элементов");
         return;
@@ -193,7 +193,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     container.appendChild(doneBtn);
-    debug.log("Добавлено кнопка 'Готово'");
+    debugConsole.loglog("Добавлено кнопка 'Готово'");
   }
   function setCookie(name, value, days) {
     const expires = new Date();
@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
-  function debug.log(message) {
+  function debugConsole.loglog(message) {
     let debugContainer = document.getElementById("debug-container");
     if (!debugContainer) {
       debugContainer = document.createElement("div");
