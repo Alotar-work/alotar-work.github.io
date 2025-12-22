@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Получаем полный URL
   const href = window.location.href;
+  const debugConsole = new DebugConsole();
 
   // Проверяем, заканчивается ли URL на 'cart' или 'cart/'
   if (/\/cart(\?.*)?$/.test(href)) {
@@ -206,3 +207,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }, 2000);
 });
+
