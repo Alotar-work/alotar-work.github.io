@@ -2,6 +2,7 @@ class DebugConsole {
   constructor() {
     this.containerId = "debug-container";
     this.storageKey = "debugLogs";
+    this.cookieName = "debugModeEnabled";
     this.maxLogs = 500;
     this.isActive = false;
     this.container = null;
@@ -9,21 +10,42 @@ class DebugConsole {
     this.logs = [];
     this.init();
   }
-
   init() {
-    if (this.checkUrlForDebugMode()) {
+    const urlMode = this.checkUrlForDebugMode();
+    let shouldActivate = false;
+    if (urlMode === "1") {
+      shouldActivate = true;
+      setCookie(this.cookieName, "true", 30);
+      console.log(
+        "DebugConsole: Активирован через URL (?debugMode=1). Кука установлена."
+      );
+    } else if (urlMode === "0") {
+      shouldActivate = false;
+      deleteCookie(this.cookieName);
+      console.log(
+        "DebugConsole: Деактивирован через URL (?debugMode=0). Кука удалена."
+      );
+    } else {
+      const cookieValue = getCookie(this.cookieName);
+      if (cookieValue === "true") {
+        shouldActivate = true;
+        console.log("DebugConsole: Активирован через cookie.");
+      } else {
+        console.log(
+          "DebugConsole: Неактивен. Для активации добавьте ?debugMode=1 к URL."
+        );
+      }
+    }
+    if (shouldActivate) {
       this.isActive = true;
-      console.log("DebugConsole: Активирован. Режим отладки включен.");
       this.createContainer();
       this.loadLogsFromStorage();
     }
   }
-
   checkUrlForDebugMode() {
     const params = new URLSearchParams(window.location.search);
-    return params.get("debugMode") === "1";
+    return params.get("debugMode");
   }
-
   createContainer() {
     this.container = document.createElement("div");
     this.container.id = this.containerId;
@@ -32,7 +54,7 @@ class DebugConsole {
       bottom: "0",
       left: "0",
       width: "100%",
-      height: "300px",
+      height: "200px",
       backgroundColor: "rgba(17, 17, 17, 0.95)",
       color: "#eee",
       fontFamily:
@@ -53,7 +75,6 @@ class DebugConsole {
     this.container.appendChild(this.logContent);
     document.body.appendChild(this.container);
   }
-
   log(message) {
     if (!this.isActive) return;
     const timestamp = new Date().toLocaleTimeString();
@@ -67,7 +88,6 @@ class DebugConsole {
     this.container.scrollTop = this.container.scrollHeight;
     this.saveLogsToStorage();
   }
-
   saveLogsToStorage() {
     if (this.logs.length > this.maxLogs) {
       this.logs = this.logs.slice(-this.maxLogs);
@@ -81,7 +101,6 @@ class DebugConsole {
       );
     }
   }
-
   loadLogsFromStorage() {
     try {
       const storedLogs = localStorage.getItem(this.storageKey);
@@ -101,12 +120,35 @@ class DebugConsole {
       localStorage.removeItem(this.storageKey);
     }
   }
-
   clear() {
     if (!this.isActive) return;
     this.logs = [];
     this.logContent.textContent = "";
     localStorage.removeItem(this.storageKey);
     console.log("DebugConsole: Логи очищены.");
+  }
+  // --- Вспомогательные функции для работы с Cookie ---
+  setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+      const date = new Date();
+      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+      expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+  }
+  getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(";");
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === " ") c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+  }
+  deleteCookie(name) {
+    document.cookie =
+      name + "=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
   }
 }
