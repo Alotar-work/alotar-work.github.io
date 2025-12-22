@@ -15,18 +15,18 @@ class DebugConsole {
     let shouldActivate = false;
     if (urlMode === "1") {
       shouldActivate = true;
-      setCookie(this.cookieName, "true", 30);
+      this.setCookie(this.cookieName, "true", 30);
       console.log(
         "DebugConsole: Активирован через URL (?debugMode=1). Кука установлена."
       );
     } else if (urlMode === "0") {
       shouldActivate = false;
-      deleteCookie(this.cookieName);
+      this.deleteCookie(this.cookieName);
       console.log(
         "DebugConsole: Деактивирован через URL (?debugMode=0). Кука удалена."
       );
     } else {
-      const cookieValue = getCookie(this.cookieName);
+      const cookieValue = this.getCookie(this.cookieName);
       if (cookieValue === "true") {
         shouldActivate = true;
         console.log("DebugConsole: Активирован через cookie.");
