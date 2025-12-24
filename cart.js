@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 .querySelector(".sku-item")
                 ?.textContent.includes("количество элементов: 8")
           );
-          var newKeychainDesignArray = [];
+          var newKeychainDesignArray = JSON.parse(keychainDesign);
           document
             .querySelectorAll(".md-shopcart__grid-item")
             .forEach((item) => {
@@ -218,3 +218,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }, 2000);
 });
+
