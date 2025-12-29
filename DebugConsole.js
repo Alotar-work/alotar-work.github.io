@@ -90,10 +90,6 @@ class DebugConsole {
       if (cookieValue === "true") {
         shouldActivate = true;
         console.log("DebugConsole: Активирован через cookie.");
-      } else {
-        console.log(
-          "DebugConsole: Неактивен. Для активации добавьте ?debugMode=1 к URL."
-        );
       }
     }
 
