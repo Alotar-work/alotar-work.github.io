@@ -152,7 +152,6 @@ class KeychainEditor {
         try {
           // Декодируем и парсим параметр
           const elementsTitles = JSON.parse(decodeURIComponent(keychainParam));
-          console.log(elementsTitles);
           // 2) Проверяем количество элементов. Если их 4 или 8...
           if (
             Array.isArray(elementsTitles) &&
@@ -160,7 +159,6 @@ class KeychainEditor {
           ) {
             // ...устанавливаем соответственную длину брелока
             this.setMaxElements(elementsTitles.length);
-
             // Размещаем на шнурке указанные элементы
             elementsTitles.forEach((title) => {
               // Ищем элемент среди загруженных шаблонов по title
@@ -1118,6 +1116,7 @@ class KeychainEditor {
     });
   }
 }
+
 
 
 
