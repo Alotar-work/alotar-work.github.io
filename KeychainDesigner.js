@@ -665,7 +665,7 @@ class KeychainEditor {
       return this.createElement(elementData);
     });
 
-    Promise.all(elementPromises).then((elements) => {
+    return Promise.all(elementPromises).then((elements) => {
       elements.forEach((element) => {
         element.on("moving", () => {
           // Запоминаем начальную позицию перетаскивания
@@ -1119,6 +1119,7 @@ class KeychainEditor {
     });
   }
 }
+
 
 
 
