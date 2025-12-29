@@ -147,12 +147,12 @@ class KeychainEditor {
       // 1) Проверка существования параметра keychain в адресной строке
       const urlParams = new URLSearchParams(window.location.search);
       const keychainParam = urlParams.get("keychain");
-
+      console.log(keychainParam);
       if (keychainParam) {
         try {
           // Декодируем и парсим параметр
           const elementsTitles = JSON.parse(decodeURIComponent(keychainParam));
-
+          console.log(elementsTitles);
           // 2) Проверяем количество элементов. Если их 4 или 8...
           if (
             Array.isArray(elementsTitles) &&
@@ -160,7 +160,7 @@ class KeychainEditor {
           ) {
             // ...устанавливаем соответственную длину брелока
             this.setMaxElements(elementsTitles.length);
-
+            console.log(elementsTitles.length);
             // Размещаем на шнурке указанные элементы
             elementsTitles.forEach((title) => {
               // Ищем элемент среди загруженных шаблонов по title
@@ -169,6 +169,7 @@ class KeychainEditor {
               );
               if (element && !element.onCord) {
                 this.attachElementToCord(element);
+                console.log(element);
               }
             });
           }
@@ -1117,3 +1118,4 @@ class KeychainEditor {
     });
   }
 }
+
