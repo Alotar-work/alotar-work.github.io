@@ -136,11 +136,46 @@ class KeychainEditor {
     this.isApplyResponsiveAwait = false;
   }
 
-  init(targetElementSelector) {
+  async init(targetElementSelector) {
     this.container = document.querySelector(targetElementSelector);
     if (this.container) {
       this.container.innerHTML = "";
-      this.initializeEditor();
+
+      // Ждем окончания инициализации и создания элементов (измененный initializeEditor)
+      await this.initializeEditor();
+
+      // 1) Проверка существования параметра keychain в адресной строке
+      const urlParams = new URLSearchParams(window.location.search);
+      const keychainParam = urlParams.get("keychain");
+
+      if (keychainParam) {
+        try {
+          // Декодируем и парсим параметр
+          const elementsTitles = JSON.parse(decodeURIComponent(keychainParam));
+
+          // 2) Проверяем количество элементов. Если их 4 или 8...
+          if (
+            Array.isArray(elementsTitles) &&
+            (elementsTitles.length === 4 || elementsTitles.length === 8)
+          ) {
+            // ...устанавливаем соответственную длину брелока
+            this.setMaxElements(elementsTitles.length);
+
+            // Размещаем на шнурке указанные элементы
+            elementsTitles.forEach((title) => {
+              // Ищем элемент среди загруженных шаблонов по title
+              const element = this.templateElements.find(
+                (el) => el.title === title
+              );
+              if (element && !element.onCord) {
+                this.attachElementToCord(element);
+              }
+            });
+          }
+        } catch (e) {
+          console.error("Ошибка при чтении параметра keychain:", e);
+        }
+      }
     } else {
       console.error(
         `Элемент с селектором "${targetElementSelector}" не найден`
@@ -160,7 +195,7 @@ class KeychainEditor {
 
     this.applyResponsive();
 
-    this.createElements();
+    return this.createElements();
   }
 
   createCanvas() {
@@ -1000,14 +1035,31 @@ class KeychainEditor {
     } else {
       cordImageUrl = this.options.cordUrls.green;
     }
+
     const elementsOnCord = [];
     this.elementsOnCord.forEach((element) => {
       if (element && element.title) {
         elementsOnCord.push({ title: element.title });
       }
     });
-    const result = { cord: cordImageUrl, elements: elementsOnCord };
-    return JSON.stringify(result, null, 2);
+
+    // 3) Формируем ссылку на брелок
+    // Собираем массив заголовков элементов для параметра keychain
+    const titlesArray = this.elementsOnCord.map((el) => el.title);
+    const keychainParamValue = encodeURIComponent(JSON.stringify(titlesArray));
+
+    // Собираем полную ссылку
+    const baseUrl = window.location.origin + window.location.pathname;
+    const finalUrl = `${baseUrl}?keychain=${keychainParamValue}`;
+
+    const resultData = {
+      cord: cordImageUrl,
+      elements: elementsOnCord,
+      url: finalUrl,
+    };
+
+    // Возвращаем объект и с JSON, и с готовой ссылкой
+    return JSON.stringify(resultData, null, 2);
   }
 
   animateElement(
