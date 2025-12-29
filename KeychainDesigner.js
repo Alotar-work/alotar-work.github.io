@@ -167,12 +167,11 @@ class KeychainEditor {
               const element = this.templateElements.find(
                 (el) => el.title === title
               );
-              console.log(element);
               if (element && !element.onCord) {
                 this.attachElementToCord(element);
-                console.log(element);
               }
             });
+            this.canvas.renderAll();
           }
         } catch (e) {
           console.error("Ошибка при чтении параметра keychain:", e);
@@ -1119,6 +1118,7 @@ class KeychainEditor {
     });
   }
 }
+
 
 
 
