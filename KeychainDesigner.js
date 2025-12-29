@@ -164,7 +164,7 @@ class KeychainEditor {
             // Размещаем на шнурке указанные элементы
             elementsTitles.forEach((title) => {
               // Ищем элемент среди загруженных шаблонов по title
-              const element = this.elementsData.find(
+              const element = this.templateElements.find(
                 (el) => el.title === title
               );
               console.log(element);
@@ -1119,6 +1119,7 @@ class KeychainEditor {
     });
   }
 }
+
 
 
 
