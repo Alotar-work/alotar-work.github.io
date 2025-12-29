@@ -1,11 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Получаем полный URL
   const href = window.location.href;
-  const debugConsole = new DebugConsole();
 
   // Проверяем, заканчивается ли URL на 'cart' или 'cart/'
   if (/\/cart(\?.*)?$/.test(href)) {
     var setEmail = false;
+    const debugConsole = new DebugConsole();
     // Создаем MutationObserver для отслеживания появления контейнера
     const observer = new MutationObserver(() => {
       let container = document.querySelector(".md-shopcart__delivery");
@@ -218,4 +218,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }, 2000);
 });
+
 
