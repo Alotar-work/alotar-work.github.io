@@ -4,8 +4,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const spanHTML =
     '<span class="mod--fs_20" style="font-size:20px;">Количество элементов:</span>';
   const keychainEditor = new KeychainEditor();
-  keychainEditor.init(".product-gallery.layout-square");
-  debugConsole.log("Инициализирован конструктор");
+  keychainEditor.init(".product-gallery.layout-square").then(() => {
+    debugConsole.log("Инициализирован конструктор");
+  });
 
   var keychainClear = getCookie("keychainClear");
   if (keychainClear == 1) {
@@ -219,3 +220,4 @@ document.addEventListener("DOMContentLoaded", function () {
     return emailRegex.test(email);
   }
 });
+
