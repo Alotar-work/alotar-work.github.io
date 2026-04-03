@@ -1,3 +1,33 @@
+/**
+ИНСТРУКЦИЯ.
+1) Загрузите картинку на любой хостинг, где можно получить на неё прямую ссылку для просмотра.
+Прямая ссылка - это, если вставить её в адресную строку в браузере, вы увидете картинку.
+Как это сделать в админке сайта в vigbo:
+- загрузите картинку в карточке товара, в разделе "Фотографии"
+- дождитесь загрузки картинки и её отображения в списке
+- кликните правой кнопкой по картинке и нажмите "Копировать ссылку на изображение"
+
+2) Добавление картики:
+Шнурки:
+- найдите массив cordUrls
+- после последнего элемента перейдите на новую строку и пропишите новое значение по аналогии - цвет: "ссылка_на_картинку",
+- найдите массив svgIcons
+- после последнего элемента перейдите на новую строку и пропишите новое значение по аналогии - цвет: `код_svg_картинки`,
+Примечание: значение "цвет" в первом и во втором массиве должны совпадать
+
+Детали:
+- найдите массив elementsData
+- после последнего элемента перейдите на новую строку и пропишите новое значение по аналогии - 
+{
+  url: "ссылка_на_картинку",
+  startX: позиция_по_X,
+  startY: позиция_по_Y,
+  title: "уникальное_название_на_латинице",
+},
+
+ПРИМЕЧАНИЕ: после добавления кратинок подождите минуту-две, пока обовится кэш. Картинки не всегда появляются сразу.
+*/
+
 class KeychainEditor {
   constructor(options = {}) {
     this.options = {
@@ -68,15 +98,27 @@ class KeychainEditor {
           title: "kotok-a-stripe-bud-up",
         },
         {
-          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-a202d5490f2e9f72714aaa6fe0440f61.png",
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-ab6f9d040c22053f587d382aaf6b833c.png",
           startX: 430,
           startY: 100,
+          title: "kotok-a-flat-pink",
+        },
+        {
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-a202d5490f2e9f72714aaa6fe0440f61.png",
+          startX: 400,
+          startY: 120,
           title: "kotok-a-yellow-block-up",
+        },
+        {
+          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/m-dd7647d62ffa1a63419839bb7ef24051.png",
+          startX: 510,
+          startY: 150,
+          title: "kotok-a-head-bar",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-c5993e649898375b0af26a26195d3b82.png",
           startX: 510,
-          startY: 150,
+          startY: 200,
           title: "kotok-a-red-bud-up",
         },
         {
@@ -84,12 +126,6 @@ class KeychainEditor {
           startX: 400,
           startY: 200,
           title: "kotok-a-rhomb-up",
-        },
-        {
-          url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-ab6f9d040c22053f587d382aaf6b833c.png",
-          startX: 510,
-          startY: 250,
-          title: "kotok-a-flat-pink",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-97e9860e583911096942c661d76bbc86.png",
