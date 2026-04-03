@@ -99,14 +99,14 @@ class KeychainEditor {
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-ab6f9d040c22053f587d382aaf6b833c.png",
-          startX: 430,
-          startY: 100,
+          startX: 450,
+          startY: 90,
           title: "kotok-a-flat-pink",
         },
         {
           url: "https://cdn-sh1.vigbo.com/shops/179902/products/24017636/images/3-a202d5490f2e9f72714aaa6fe0440f61.png",
           startX: 400,
-          startY: 120,
+          startY: 150,
           title: "kotok-a-yellow-block-up",
         },
         {
